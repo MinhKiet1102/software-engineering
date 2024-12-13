@@ -1,0 +1,125 @@
+{% extends "layout/base.html" %}
+{% block menu %}
+    <li class=""><a class="nav-mobile-link" href="{{ url_for('authentication_routes.trang_khach_hang') }}">Trang chủ</a></li>
+    <li class="nav-item"><a class="nav-mobile-link" href="{{ url_for('dat_ve_routes.danh_sach_dat_ve') }}">Đặt vé</a></li>
+    <li class=""><a class="nav-mobile-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
+{% endblock %}
+{% block main_content %}
+    <h1 class="text-center text-uppercase mt-5">Đặt vé chuyến bay</h1>
+    <form method="post" action="{{ url_for('dat_ve_routes.vnpay_payment') }}" id="payment-form" class="grid wide">
+        <!-- Mã khách hàng (hidden) -->
+        <input type="hidden" name="customer_id" value="{{ session['user']['id'] }}">
+        <!-- Mã vé (hidden input) -->
+        <input type="hidden" name="id" value="{{ ticket_flight.id }}">
+        
+        <!-- Mã lịch chuyến bay (hidden input) -->
+        <input type="hidden" name="schedule_flight_id" value="{{ schedule_flight_id }}">
+    
+        <!-- Họ tên -->
+        <div class="form-group">
+            <label for="fullname">Họ tên:</label>
+            <input type="text" class="form-control" id="fullname" name="fullname" required maxlength="50" placeholder="Nhập họ và tên">
+        </div>
+    
+        <!-- CMND/CCCD -->
+        <div class="form-group">
+            <label for="identity_card">CMND/CCCD:</label>
+            <input type="text" class="form-control" id="identity_card" name="identity_card" required maxlength="12" placeholder="Nhập số CMND/CCCD">
+        </div>
+    
+        <!-- Số điện thoại -->
+        <div class="form-group">
+            <label for="phone_number">Số điện thoại:</label>
+            <input type="tel" class="form-control" id="phone_number" name="phone_number" required maxlength="10" pattern="[0-9]{10}" placeholder="Nhập số điện thoại">
+        </div>
+
+        <div class="form-group">
+            <label for="quantity">Nhập số lượng vé muốn đặt:</label>
+            <input 
+                type="number" 
+                id="quantity" 
+                name="quantity" 
+                min="1" 
+                max="{{ remaining_tickets }}" 
+                value="1" 
+                required>
+            <small class="form-text text-muted">
+                Số lượng vé còn lại: {{ remaining_tickets }}
+            </small>
+        </div>
+        
+    
+        <!-- Số tiền (readonly để tránh chỉnh sửa) -->
+        <div class="form-group">
+            <label for="amount">Số tiền (VNĐ):</label>
+            <input type="text" class="form-control" id="amount" name="amount" value="{{ ticket_flight.price }}" data-price="{{ ticket_flight.price }}" readonly>
+        </div>
+    
+        <!-- Phương thức thanh toán (readonly) -->
+        <div class="form-group">
+            <label for="method">Phương thức thanh toán:</label>
+            <input type="text" class="form-control" id="method" name="method" value="VNPay" readonly>
+        </div>
+    
+        <!-- Loại đơn hàng -->
+        <div class="form-group">
+            <label for="order_type">Loại đơn hàng:</label>
+            <select class="form-control" id="order_type" name="order_type" required>
+                <option value="billpayment">Thanh toán hóa đơn</option>
+                <option value="airline">Vé máy bay</option>
+                <option value="other">Khác</option>
+            </select>
+        </div>
+    
+        <!-- Mô tả đơn hàng -->
+        <div class="form-group">
+            <label for="order_desc">Mô tả đơn hàng:</label>
+            <textarea class="form-control" id="order_desc" name="order_desc" rows="3" required placeholder="Nhập mô tả cho đơn hàng"></textarea>
+        </div>
+    
+        <!-- Mã ngân hàng -->
+        <div class="form-group">
+            <label for="bank_code">Ngân hàng:</label>
+            <select class="form-control" id="bank_code" name="bank_code">
+                <option value="">Không chọn</option>
+                <option value="VCB">Vietcombank</option>
+                <option value="ACB">ACB</option>
+                <option value="SCB">SCB</option>
+                <option value="BIDV">BIDV</option>
+                <option value="NCB">NCB</option>
+                <!-- Thêm ngân hàng khác nếu cần -->
+            </select>
+        </div>
+    
+        <!-- Ngôn ngữ (vn hoặc en) -->
+        <div class="form-group">
+            <label for="language">Ngôn ngữ:</label>
+            <select class="form-control" id="language" name="language">
+                <option value="vn">Tiếng Việt</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+    
+        <!-- Nút gửi form -->
+        <button type="submit" class="btn btn-primary">Đặt vé và thanh toán</button>
+        <a href="{{ url_for('dat_ve_routes.danh_sach_dat_ve') }}" class="btn btn-secondary">Trở về</a>
+    </form>
+{% endblock %}
+{% block js %}
+<script>
+    // Lắng nghe sự thay đổi trên trường số lượng
+    document.getElementById('quantity').addEventListener('input', function () {
+        // Lấy giá trị số lượng từ input
+        const quantity = parseInt(this.value) || 1; // Nếu không hợp lệ thì mặc định là 1
+
+        // Lấy giá vé gốc từ thuộc tính `data-price`
+        const pricePerticket_flight = parseInt(document.getElementById('amount').dataset.price);
+
+        // Tính tổng giá
+        const totalPrice = quantity * pricePerticket_flight;
+
+        // Cập nhật trường `amount` với tổng giá mới
+        document.getElementById('amount').value = totalPrice;
+    });
+</script>
+{% endblock %}
