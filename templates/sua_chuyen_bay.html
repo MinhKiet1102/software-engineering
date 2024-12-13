@@ -1,0 +1,51 @@
+{% extends "layout/base.html" %}
+{% block menu %}
+    <li class=""><a class="nav-mobile-link"
+            href="{{ url_for('authentication_routes.trang_admin') }}">Trang chủ</a></li>
+    <li class=""><a class="nav-mobile-link"
+            href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay_admin') }}">Quản lý chuyến bay</a></li>
+    <li class=""><a class="nav-mobile-link"
+            href="{{ url_for('san_bay_routes.danh_sach_san_bay') }}">Quản lý sân bay</a></li>
+    <li class=""><a class="nav-mobile-link"
+            href="{{ url_for('quy_dinh_routes.thay_doi_quy_dinh') }}">Quy định</a></li>
+    <li class=""><a class="nav-mobile-link"
+            href="{{ url_for('quy_dinh_routes.doanh_thu_theo_thang') }}">Báo cáo</a></li>
+    <li class=""><a class="nav-mobile-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
+{% endblock %}
+{% block main_content %}
+<h2 style="text-align: center;">Sửa Chuyến Bay</h2>
+    <form method="post" class="grid wide">
+        <!-- Trong file sua_chuyen_bay.html -->
+
+        <!-- Thêm đoạn mã sau vào form để hiển thị dropdown cho sân bay đi và sân bay đến -->
+        <div class="form-group">
+            <label for="airport_departure">Sân Bay Đi:</label>
+            <select class="form-control" id="airport_departure" name="airport_departure" required>
+                {% for airport in airport_list %}
+                <option value="{{ airport.abbreviate_name }}" {% if flight.start_location_id==airport.abbreviate_name %}selected{% endif %}>{{ airport.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="airport_arrival">Sân Bay Đến:</label>
+            <select class="form-control" id="airport_arrival" name="airport_arrival" required>
+                {% for airport in airport_list %}
+                <option value="{{ airport.abbreviate_name }}" {% if flight.destination_id==airport.abbreviate_name %}selected{% endif %}>{{ airport.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="airport_departure">Điểm Xuất Phát:</label>
+            <input value="{{flight.start_location}}" type="text" class="form-control" id="start_location" name="start_location">
+        </div>
+        <div class="form-group">
+            <label for="airport_arrival">Điểm Đến:</label>
+            <input value="{{flight.destination}}" type="text" class="form-control" id="destination" name="destination">
+        </div>
+        <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
+    </form>
+{% endblock %}
+{% block js %}
+{% endblock %}

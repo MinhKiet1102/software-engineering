@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> {% block title %} Aivivu {% endblock %}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="shortcut icon" href="/static/img/logo-icon.png">
+    <link rel="stylesheet" href="/static/css/fontawesome-free-6.4.0-web/css/all.css">
+    <link rel="stylesheet" href="/static/css/index.css">
+    {% block css %}<link rel="stylesheet" href="/static/css/table.css">{% endblock %}
+    <script src="/static/js/index.js" defer></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+</head>
+
+<body >
+    <div class="container mt-5">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-info">
+            {{ messages[0] }}
+        </div>
+        {% endif %}
+        {% endwith %}
+        {% block content %}
+        {% endblock %}
+
+    </div>
+    <div id="main">
+        <div id="chatbox">
+            <div id="chatbox-text">Nhấn vào để chat</div>
+            <a class="chatbox-a" href="https://www.facebook.com/AivivuHoChiMinh" target="_blank"><i
+                    class="fa-brands fa-facebook-messenger"></i></a>
+        </div>
+        <div id="header" class="flexbox">
+            <!-- Nút mở nav mobile -->
+            <div class="nav-bar">
+                <i class="fa-solid fa-bars" onclick="navMobile(this)"></i>
+            </div>
+            <!-- Lớp phủ đen khi mở nav mobile -->
+            <div class="nav-overlay" id="overlay" onclick="closeNav(this)"></div>
+
+            <div class="nav-mobile" id="mobile">
+                <!-- Nút đóng nav mobile -->
+                <div class="nav-close">
+                    <i class="fa-regular fa-circle-xmark" onclick="closeNav(this)"></i>
+                </div>
+                <!-- nav menu trên mobile -->
+                <ul class="nav-list">
+                    {% if role == "Customer" %}
+                        <li class="">
+                            <a class="nav-mobile-link" href="{{ url_for('authentication_routes.trang_khach_hang') }}">Trang chủ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-mobile-link" href="{{ url_for('dat_ve_routes.danh_sach_dat_ve') }}">Đặt vé</a>
+                        </li>
+                        <li class="">
+                            <a class="nav-mobile-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a>
+                        </li>
+                    {% elif role == "Staff" %}
+                        <li class="">
+                            <a class="nav-link" href="{{ url_for('authentication_routes.trang_nhan_vien') }}">Trang chủ</a>
+                        </li>
+                        <li class="">
+                            <a class="nav-link" href="{{ url_for('ban_ve_routes.danh_sach_ban_ve') }}">Bán vé</a>
+                        </li>
+                        <li class="">
+                            <a class="nav-link" href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay') }}">Quản Lý Chuyến Bay</a>
+                        </li>
+                        <li class="">
+                            <a class="nav-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a>
+                        </li>
+                    {% elif role == "Admin" %}
+                        <li class="">
+                            <a class="nav-mobile-link" href="{{ url_for('authentication_routes.trang_admin') }}">Trang chủ</a>
+                        </li>
+                        <li class="">
+                            <a class="nav-mobile-link" href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay_admin') }}">Quản lý chuyến bay</a>
+                        </li>
+                        <li class="">
+                            <a class="nav-mobile-link" href="{{ url_for('san_bay_routes.danh_sach_san_bay') }}">Quản lý sân bay</a>
+                        </li>
+                        <li class="">
+                            <a class="nav-mobile-link" href="{{ url_for('quy_dinh_routes.thay_doi_quy_dinh') }}">Quy định</a>
+                        </li>
+                        <li class="">
+                            <a class="nav-mobile-link" href="{{ url_for('quy_dinh_routes.doanh_thu_theo_thang') }}">Báo cáo</a>
+                        </li>
+                        <li class="">
+                            <a class="nav-mobile-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a>
+                        </li>
+                    {% else %}
+                        <!-- Nếu không xác định được quyền -->
+                        <li class="">
+                            <a class="nav-mobile-link" href="{{ url_for('authentication_routes.index') }}">Đăng nhập</a>
+                        </li>
+                    {% endif %}
+                </ul>
+                
+            </div>
+
+            <div class="header-logo">
+                <a href="{% if session['user']['role'] == 'Staff' %}
+                            {{ url_for('authentication_routes.trang_nhan_vien') }}
+                         {% elif session['user']['role'] == 'Customer' %}
+                            {{ url_for('authentication_routes.trang_khach_hang') }}
+                         {% elif session['user']['role'] == 'Admin' %}
+                            {{ url_for('authentication_routes.trang_admin') }}
+                         {% else %}
+                            {{ url_for('authentication_routes.index') }} <!-- Default URL nếu không có role -->
+                         {% endif %}">
+                    <img src="/static/img/logo.png" alt="Logo">
+                </a>
+            </div>
+           
+            <!-- nav menu trên PC -->
+            <ul class="nav flexbox"> <!-- class flexbox dùng để đặt nhanh vào những vị trí cần flex -->
+                {% block menu%}
+                <li class=""><a class="nav-link" href="{{ url_for('authentication_routes.trang_nhan_vien') }}">Trang chủ</a></li>
+                <li class=""><a class="nav-link" href="{{ url_for('ban_ve_routes.danh_sach_ban_ve') }}">Bán vé</a></li>
+                <li class=""> <a class="nav-link" href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay') }}">Quản Lý Chuyến Bay</a></li>
+                <li class=""><a class="nav-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
+                {% endblock %}
+            </ul>
+        </div>
+    </div>
+    {% block main_content %}
+    {% endblock %}
+    {% block footer %}
+    {% endblock %}
+</body>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% block js %}
+{% endblock %}
+</html>
