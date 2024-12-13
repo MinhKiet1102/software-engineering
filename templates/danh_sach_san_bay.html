@@ -1,0 +1,47 @@
+{% extends "layout/base.html" %}
+{% block menu %}
+<li class=""><a class="nav-mobile-link"
+    href="{{ url_for('authentication_routes.trang_admin') }}">Trang chủ</a></li>
+<li class=""><a class="nav-mobile-link"
+    href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay_admin') }}">Quản lý chuyến bay</a></li>
+<li class=""><a class="nav-mobile-link"
+    href="{{ url_for('san_bay_routes.danh_sach_san_bay') }}">Quản lý sân bay</a></li>
+<li class=""><a class="nav-mobile-link"
+    href="{{ url_for('quy_dinh_routes.thay_doi_quy_dinh') }}">Quy định</a></li>
+<li class=""><a class="nav-mobile-link"
+    href="{{ url_for('quy_dinh_routes.doanh_thu_theo_thang') }}">Báo cáo</a></li>
+<li class=""><a class="nav-mobile-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
+{% endblock %}
+{% block main_content %}
+<h2 class="text-center text-uppercase">Danh Sách Sân Bay Hiện Có</h2>
+    <a href="{{ url_for('san_bay_routes.them_san_bay') }}" class="btn btn-success my-3" style="margin-left: 10%;">Thêm mới</a>
+    <div class="table-wrapper">
+    <table class="table mt-3 mx-auto" style="width: 80%; text-align: center;">
+        <thead>
+            <tr>
+                <th scope="col">Mã Sân Bay</th>
+                <th scope="col">Tên Sân Bay</th>
+                <th scope="col">Vị Trí</th>
+                <th scope="col">Quốc Gia</th>
+                <th scope="col">Hành Động</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for airport in airport_list %}
+            <tr>
+                <td>{{ airport.abbreviate_name }}</td>
+                <td>{{ airport.name }}</td>
+                <td>{{ airport.location }} </td>
+                <td>{{ airport.nation }} </td>
+                <td>
+                    <a href="{{ url_for('san_bay_routes.sua_san_bay', airport_id=airport.abbreviate_name) }}" class="btn btn-warning">Sửa</a>
+                    <a href="{{ url_for('san_bay_routes.xoa_san_bay', airport_id=airport.abbreviate_name) }}"class="btn btn-danger">Xóa</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+{% block js %}
+{% endblock %}

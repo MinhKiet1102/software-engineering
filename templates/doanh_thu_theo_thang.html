@@ -1,0 +1,120 @@
+{% extends "layout/base.html" %}
+{% block menu %}
+    <li class=""><a class="nav-mobile-link"
+            href="{{ url_for('authentication_routes.trang_admin') }}">Trang chủ</a></li>
+    <li class=""><a class="nav-mobile-link"
+            href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay_admin') }}">Quản lý chuyến bay</a></li>
+    <li class=""><a class="nav-mobile-link"
+            href="{{ url_for('san_bay_routes.danh_sach_san_bay') }}">Quản lý sân bay</a></li>
+    <li class=""><a class="nav-mobile-link"
+            href="{{ url_for('quy_dinh_routes.thay_doi_quy_dinh') }}">Quy định</a></li>
+    <li class=""><a class="nav-mobile-link"
+            href="{{ url_for('quy_dinh_routes.doanh_thu_theo_thang') }}">Báo cáo</a></li>
+    <li class=""><a class="nav-mobile-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
+{% endblock %}
+{% block main_content %}
+<h2 class="text-center mb-4">Báo Cáo Doanh Thu Theo Tháng</h2>
+<form id="monthForm" method="post" class="grid wide">
+    <div class="form-group">
+        <label for="selectedMonth">Chọn tháng:</label>
+        <input type="month" id="selectedMonth" name="selected_month" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-danger ml-2">Xem báo cáo</button>
+    <button type="button" onclick="exportReport()" class="btn btn-success ml-2">Xuất Báo Cáo</button>
+    <!-- Nút chuyển sang xem bảng báo cáo -->
+    <button type="button" class="btn btn-warning ml-2" onclick="redirectToTable()">Xem bảng báo cáo</button>
+</form>
+<div class="container mt-4">
+    <div>
+        <canvas class="mb-4" id="revenueChart"></canvas>
+    </div>
+</div>
+<!-- Canvas ẩn để vẽ lại biểu đồ khi xuất PDF -->
+<canvas id="hiddenChart" style="display: none;"></canvas>
+
+{% endblock %}
+{% block js %}
+ 
+<script>
+    // Hàm chuyển hướng sang bảng báo cáo
+    function redirectToTable() {
+        const selectedMonth = document.getElementById('selectedMonth').value;
+        if (!selectedMonth) {
+            alert("Vui lòng chọn tháng trước khi xem bảng báo cáo!");
+            return;
+        }
+        // Chuyển định dạng tháng từ YYYY-MM sang số tháng (1-12)
+        const monthNumber = new Date(selectedMonth).getMonth() + 1;
+
+        // Điều hướng đến route 'bang_thong_ke' với tháng được chọn
+        window.location.href = `/bang_thong_ke?selected_month=${monthNumber}`;
+    }
+
+    const labels = {{ data|map(attribute='route')|list|tojson }};
+    const revenues = {{ data|map(attribute='total_revenue')|list|tojson }};
+    
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+
+    // Khởi tạo biểu đồ
+    var chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Doanh thu',
+                data: revenues,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    function exportReport() {
+        // Lấy ngữ cảnh của biểu đồ revenueChart
+        var chartCanvas = document.getElementById('revenueChart');
+        var chartImage = chartCanvas.toDataURL('image/png', 1.0); // Chuyển biểu đồ thành ảnh PNG
+    
+        // Tạo một container HTML để xuất PDF
+        var exportContainer = document.createElement('div');
+    
+        // Thêm tiêu đề báo cáo
+        var titleElement = document.createElement('h2');
+        titleElement.textContent = 'Báo Cáo Doanh Thu Theo Tháng';
+        titleElement.style.textAlign = 'center';
+        exportContainer.appendChild(titleElement);
+    
+        // Thêm thông tin tháng được chọn
+        var monthElement = document.createElement('p');
+        monthElement.textContent = 'Tháng: ' + document.getElementById('selectedMonth').value;
+        monthElement.style.textAlign = 'center';
+        exportContainer.appendChild(monthElement);
+    
+        // Thêm hình ảnh biểu đồ vào container
+        var chartImageElement = document.createElement('img');
+        chartImageElement.src = chartImage;
+        chartImageElement.style.width = '100%'; // Đảm bảo hình ảnh vừa khung PDF
+        exportContainer.appendChild(chartImageElement);
+    
+        // Cấu hình xuất PDF
+        var pdfOptions = {
+            margin: 10,
+            filename: 'BaoCaoDoanhThu.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 }, // Đảm bảo độ nét cho hình ảnh
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+    
+        // Xuất PDF
+        html2pdf().set(pdfOptions).from(exportContainer).save();
+    }
+</script>
+{% endblock %}
