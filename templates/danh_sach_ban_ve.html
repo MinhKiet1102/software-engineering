@@ -1,0 +1,86 @@
+{% extends "layout/base.html" %}
+{% block main_content %}
+<h1 class="text-center text-uppercase mt-5" style="margin-top: 80px;">Danh sách chuyến bay</h1>
+<form method="get" action="/danh_sach_ban_ve" class="grid wide">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="airport_departure">Sân bay đi:</label>
+                <select class="form-control" id="airport_departure" name="airport_departure">
+                    {% for airport in airport_departure_list %}
+                            <option value="{{ airport.abbreviate_name }}" {% if airport.abbreviate_name==airport_departure_selected
+                                %}selected{% endif %}>
+                                {{ airport.abbreviate_name }} - {{ airport.name }}
+                            </option>
+                            {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="airport_arrival">Sân bay đến:</label>
+                <select class="form-control" id="airport_arrival" name="airport_arrival">
+                    {% for airport in airport_arrival_list %}
+                            <option value="{{ airport.abbreviate_name }}" {% if airport.abbreviate_name==airport_departure_selected
+                                %}selected{% endif %}>
+                                {{ airport.abbreviate_name }} - {{ airport.name }}
+                            </option>
+                            {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="start_date">Ngày khởi hành:</label>
+                <input type="date" class="form-control" id="start_date" name="start_date"
+                    value="{{ start_date }}" required>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label></label>
+                <button type="submit" class="btn btn-primary btn-block">Tìm kiếm</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Bảng hiển thị danh sách chuyến bay -->
+<div class="table-wrapper">
+<table class="table mt-3 mx-auto" style="width: 80%; text-align: center;">
+    <thead>
+        <tr>
+            <th>Chuyến bay</th>
+            <th>Sân bay đi</th>
+            <th>Sân bay đến</th>
+            <th>Ngày khởi hành</th>
+            <th>Hạng vé</th>
+            <th>Giá</th>
+            <th>Số vé còn lại</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+
+
+        {% for flight in flight_list %}
+        <tr>
+            <td>{{ flight[0] }}</td>
+            <td>{{ flight[1] }}</td>
+            <td>{{ flight[2] }}</td>
+            <td>{{ flight[3].strftime('%H:%M - %d/%m/%Y') }}</td>
+            <td>{{ flight[6] }}</td>
+            <td>{{ "{:,.0f}".format(flight[4]).replace(",", ".") }} VNĐ</td>
+            <td>{{ flight.remaining_tickets }}</td>
+            <td>
+                <a href="{{ url_for('ban_ve_routes.ban_ve', id=flight[5], schedule_flight_id=flight[7])}}"
+                    class="btn btn-primary">Bán vé</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}
+{% block js %}
+{% endblock %}
