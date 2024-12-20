@@ -1,0 +1,93 @@
+/* Định dạng cho nút xuất PDF */
+#export-pdf {
+    margin-top: 20px; /* Thêm khoảng cách phía trên cho nút */
+    padding: 12px 25px; /* Tăng kích thước nút */
+    font-size: 16px; /* Tăng kích thước chữ */
+    background-color: #007BFF; /* Màu nền cho nút */
+    color: white; /* Màu chữ cho nút */
+    border: none; /* Bỏ viền cho nút */
+    border-radius: 5px; /* Bo tròn góc cho nút */
+    cursor: pointer; /* Thay đổi con trỏ khi di chuột qua nút */
+    transition: background-color 0.3s; /* Hiệu ứng chuyển màu */
+}
+
+/* Định dạng cho nút khi di chuột qua */
+#export-pdf:hover {
+    background-color: #0056b3; /* Màu nền khi di chuột qua nút */
+}
+
+/* Định dạng cho danh sách giao dịch */
+#transactionList {
+    padding: 0.5rem;
+    background-color: #f0fee3; /* Màu nền cho danh sách giao dịch */
+}
+
+/* Định dạng cho các ô trong danh sách giao dịch */
+#transactionList td {
+    color: #000; /* Màu chữ cho ô */
+    text-decoration: none; /* Bỏ gạch chân cho chữ */
+}
+
+/* Định dạng cho trạng thái giao dịch */
+#transaction_status {
+    padding: 0.5rem;
+    background-color: #f0fee3; /* Màu nền cho trạng thái giao dịch */
+    position: relative; /* Đặt vị trí tương đối */
+}
+
+/* Bao bọc bảng để thêm thanh cuộn */
+.table-wrapper {
+    max-height: 300px; /* Chiều cao cố định của bảng */
+    overflow-y: auto; /* Thanh cuộn dọc */
+    overflow-x: hidden; /* Ẩn thanh cuộn ngang */
+    border: 1px solid #ddd; /* Đường viền bao quanh bảng */
+    position: relative; /* Đặt vị trí tương đối */
+}
+
+/* Thanh cuộn tùy chỉnh */
+.table-wrapper::-webkit-scrollbar {
+    width: 8px; /* Độ rộng thanh cuộn */
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+    background-color: #007bff; /* Màu của thanh cuộn */
+    border-radius: 4px; /* Bo góc thanh cuộn */
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+    background-color: #f1f1f1; /* Màu nền của thanh cuộn */
+}
+
+/* Bảng */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* Đảm bảo bảng không bị tràn ngang */
+}
+
+/* Tiêu đề cố định */
+.table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #007bff;
+    color: #fff;
+    z-index: 2;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+/* Hàng lẻ và chẵn */
+.table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #e9ecef;
+}
+
+.table tbody td {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
