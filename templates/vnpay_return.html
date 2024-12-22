@@ -1,6 +1,6 @@
 {% extends "layout/base.html" %}
 {% block menu %}
-<li class=""><a class="nav-mobile-link active" href="{{ url_for('authentication_routes.trang_khach_hang') }}">Trang chủ</a></li>
+<li class=""><a class="nav-mobile-link" href="{{ url_for('authentication_routes.trang_khach_hang') }}">Trang chủ</a></li>
 <li class="nav-item"><a class="nav-mobile-link" href="{{ url_for('dat_ve_routes.danh_sach_dat_ve') }}">Đặt vé</a></li>
 <li class=""><a class="nav-mobile-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
 {% endblock %}
@@ -10,7 +10,8 @@
         <div class="card-body">
             <p class="card-text">Mã thanh toán: {{ transaction_no }}</p>
             <p class="card-text">Mã đặt vé: {{ txn_ref }}</p>
-            <p class="card-text">Số tiền: {{"{:,.0f}".format(amount).replace(",", ".") }}</p>
+            <p class="card-text">Số tiền: {{ "{:,.0f}".format(amount).replace(",", ".") }} VNĐ</p>
+
     
         </div>
     </div>
