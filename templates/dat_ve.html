@@ -8,7 +8,7 @@
 {% block main_content %}
 <h1 class="text-center text-uppercase mt-5">Đặt vé chuyến bay</h1>
 <form method="post" action="{{ url_for('dat_ve_routes.vnpay_payment') }}" id="payment-form" class="grid wide">
-    <!-- Ngôn ngữ (vn hoặc en) -->
+    <!-- Ngôn ngữ (vn) -->
     <div class="form-group">
         <label for="language">Ngôn ngữ:</label>
         <input type="text" class="form-control" id="language_display" value="Tiếng Việt" readonly>
@@ -52,11 +52,10 @@
         </small>
     </div>
 
-
     <!-- Số tiền (readonly để tránh chỉnh sửa) -->
     <div class="form-group">
-        <label for="amount">Số tiền (VNĐ):</label>
-        <input type="text" class="form-control" id="amount" name="amount" value="{{ ticket_flight.price }}"
+        <label for="amount">Số tiền:</label>
+        <input type="text" class="form-control" id="amount" name="amount" value="{{ '{:,.0f}'.format(ticket_flight.price).replace(',', '.') }} VNĐ"
             data-price="{{ ticket_flight.price }}" readonly>
     </div>
 
@@ -74,9 +73,6 @@
         <!-- Hidden input gửi giá trị thực -->
         <input type="hidden" id="order_type" name="order_type" value="airline">
     </div>
-
-
-    
 
     <!-- Mã ngân hàng -->
     <div class="form-group">
@@ -102,7 +98,6 @@
 
 
 
-
     <!-- Nút gửi form -->
     <button type="submit" class="btn btn-primary">Đặt vé và thanh toán</button>
     <a href="{{ url_for('dat_ve_routes.danh_sach_dat_ve') }}" class="btn btn-secondary">Trở về</a>
@@ -110,19 +105,25 @@
 {% endblock %}
 {% block js %}
 <script>
+    // Hàm định dạng tiền Việt Nam
+    function formatCurrency(amount) {
+        return amount.toLocaleString('vi-VN') + ' VNĐ'; // Định dạng số và thêm "VNĐ"
+    }
+
     // Lắng nghe sự thay đổi trên trường số lượng
     document.getElementById('quantity').addEventListener('input', function () {
         // Lấy giá trị số lượng từ input
         const quantity = parseInt(this.value) || 1; // Nếu không hợp lệ thì mặc định là 1
 
         // Lấy giá vé gốc từ thuộc tính `data-price`
-        const pricePerticket_flight = parseInt(document.getElementById('amount').dataset.price);
+        const pricePerTicket = parseInt(document.getElementById('amount').dataset.price);
 
         // Tính tổng giá
-        const totalPrice = quantity * pricePerticket_flight;
+        const totalPrice = quantity * pricePerTicket;
 
-        // Cập nhật trường `amount` với tổng giá mới
-        document.getElementById('amount').value = totalPrice;
+        // Cập nhật trường `amount` với tổng giá mới đã định dạng
+        document.getElementById('amount').value = formatCurrency(totalPrice);
     });
 </script>
+
 {% endblock %}

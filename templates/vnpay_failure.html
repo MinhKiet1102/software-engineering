@@ -1,0 +1,9 @@
+{% extends "layout/base.html" %}
+{% block menu %}
+<li class=""><a class="nav-mobile-link" href="{{ url_for('authentication_routes.trang_khach_hang') }}">Trang chủ</a></li>
+<li class="nav-item"><a class="nav-mobile-link" href="{{ url_for('dat_ve_routes.danh_sach_dat_ve') }}">Đặt vé</a></li>
+<li class=""><a class="nav-mobile-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
+{% endblock %}
+{% block main_content %}
+<h1 class="mt-5 text-center text-uppercase">Thanh toán thất bại, vui lòng chọn vé và thanh toán lại</h1>
+{% endblock %}

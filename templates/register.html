@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký</title>
+    <link rel="stylesheet" href="/static/css/login.css">
+    <link rel="shortcut icon" href="/static/img/logo-icon.png">
+</head>
+<body  class="background-image">
+    <div class="container">
+        <h2>Đăng ký tài khoản</h2>
+        <form id="registerForm" method="POST">
+            <input type="text" id="username" placeholder="username" required>
+            <input type="text" id="fullname" placeholder="Họ và Tên" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="text" id="phone_number" placeholder="Số điện thoại" required>
+            <input type="password" id="password" placeholder="Mật khẩu" required>
+            <input type="password" id="confirmPassword" placeholder="Xác nhận mật khẩu" required>
+            <button type="submit">Đăng ký</button>
+        </form>
+        <p>Đã có tài khoản? <a href="{{ url_for('authentication_routes.index') }}">Đăng nhập</a></p>
+    </div>
+    <script src="/static/js/login.js"></script>
+</body>
+</html>
