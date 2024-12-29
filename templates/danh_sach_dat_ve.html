@@ -34,7 +34,7 @@
                     <label for="airport_arrival">Sân bay đến:</label>
                     <select class="form-control" id="airport_arrival" name="airport_arrival">
                         {% for airport in airport_arrival_list %}
-                        <option value="{{ airport.abbreviate_name }}" {% if airport.abbreviate_name==airport_departure_selected
+                        <option value="{{ airport.abbreviate_name }}" {% if airport.abbreviate_name==airport_arrival_selected
                             %}selected{% endif %}>
                             {{ airport.abbreviate_name }} - {{ airport.name }}
                         </option>
@@ -77,14 +77,14 @@
 
         {% for flight in flight_list %} 
         <tr>
-            <td>{{ flight[0] }}</td>
-            <td>{{ flight[1] }}</td>
-            <td>{{ flight[2] }}</td>
-            <td>{{ flight[3].strftime('%H:%M - %d/%m/%Y') }}</td>
-            <td>{{ flight[6] }}</td>
-            <td>{{ "{:,.0f}".format(flight[4]).replace(",", ".") }} VNĐ</td>
-            <td>{{ flight.remaining_tickets }}</td>
-            <td>
+            <td class="align-middle">{{ flight[0] }}</td>
+            <td class="align-middle">{{ flight[1] }}</td>
+            <td class="align-middle">{{ flight[2] }}</td>
+            <td class="align-middle">{{ flight[3].strftime('%H:%M - %d/%m/%Y') }}</td>
+            <td class="align-middle">{{ flight[6] }}</td>
+            <td class="align-middle">{{ "{:,.0f}".format(flight[4]).replace(",", ".") }} VNĐ</td>
+            <td class="align-middle">{{ flight.remaining_tickets }}</td>
+            <td class="align-middle">
                 <a href="{{ url_for('dat_ve_routes.dat_ve', id=flight[5], schedule_flight_id=flight[7])}}"
                     class="btn btn-primary">Đặt vé</a>
             </td>
