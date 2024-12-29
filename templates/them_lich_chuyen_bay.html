@@ -1,0 +1,108 @@
+{% extends "layout/base.html" %}
+{% block main_content %}
+<h2 class="text-center text-uppercase">Thêm Lịch Chuyến Bay</h2>
+    <form method="post"
+    action="{{ url_for('lich_chuyen_bay_routes.them_lich_chuyen_bay', flight_id=flight_id) }}" 
+    class="grid wide">
+    <!-- Form nhập thông tin lịch chuyến bay -->
+
+    <!-- Ngày giờ khởi hành -->
+    <div class="form-group">
+        <label for="start_date">Ngày Giờ Khởi Hành:</label>
+        <input type="datetime-local" class="form-control" id="start_date" name="start_date" required>
+    </div>
+
+    <!-- Thời gian bay -->
+    <div class="form-group">
+        <label for="flight_time">Thời Gian Bay (phút):</label>
+        <input type="number" class="form-control" id="flight_time" name="flight_time" required min="{{ rule_info.min_flight_time }}">
+    </div>
+
+    <!-- Số ghế hạng 1 -->
+    <div class="form-group">
+        <label for="quantity_class1">Số Ghế Hạng 1:</label>
+        <input type="number" class="form-control" id="quantity_class1" name="quantity_class1" required>
+    </div>
+
+    <!-- Số ghế hạng 2 -->
+    <div class="form-group">
+        <label for="quantity_class2">Số Ghế Hạng 2:</label>
+        <input type="number" class="form-control" id="quantity_class2" name="quantity_class2" required>
+    </div>
+
+    <!-- Sân bay trung gian -->
+    <div id="intermediate_airport_section">
+        <!-- Nơi hiển thị danh sách sân bay trung gian -->
+    </div>
+
+    <!-- Nút để thêm sân bay trung gian -->
+    <button type="button" class="btn btn-secondary" onclick="themSanBayTrungGian()">Thêm Sân Bay Trung Gian</button>
+
+    <!-- Nút submit -->
+    <button type="submit" class="btn btn-primary">Thêm</button>
+</form>
+{% endblock %}
+{% block js %}
+<script>
+    var sttCount = 1;  // Biến đếm stt
+    var so_san_bay_trung_gian_toi_da = "{{ rule_info.max_intermediate_airport}}";
+    var thoi_gian_dung_toi_thieu = "{{ rule_info.min_stop_time}}";
+    var thoi_gian_dung_toi_da = "{{ rule_info.max_stop_time}}";
+
+    function themSanBayTrungGian() {
+        if (sttCount > so_san_bay_trung_gian_toi_da)
+            return;
+        // Tạo một div chứa thông tin sân bay trung gian
+        var divSanBayTrungGian = document.createElement("div");
+        divSanBayTrungGian.className = "intermediate_airport";
+
+        // Thêm các trường nhập liệu cho sân bay trung gian
+        divSanBayTrungGian.innerHTML = `
+            <div class="form-group">
+                <label for="stt">STT:</label>
+                <input type="text" class="form-control" name="stt[]" value="${sttCount}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="intermediate_airports">Sân Bay Trung Gian:</label>
+                <select class="form-control" name="intermediate_airports[]" required>
+                    <!-- Thêm các option từ danh sách sân bay -->
+                    {% for airport in airport_list %}
+                        <option value="{{ airport.abbreviate_name }}">{{ airport.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="time_stop">Thời Gian Dừng (phút):</label>
+            <input type="number" class="form-control" name="stop_time[]" required max="${thoi_gian_dung_toi_da}" min="${thoi_gian_dung_toi_thieu}">
+            </div>
+            <div class="form-group">
+                <label for="note">Ghi Chú:</label>
+                <input type="text" class="form-control" name="note[]">
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-danger" onclick="xoaSanBayTrungGian(this)">Xóa</button>
+            </div>
+            <hr>`;
+
+        // Tăng số stt cho lần thêm mới
+        sttCount++;
+
+        // Thêm div vào phần tử chứa sân bay trung gian
+        document.getElementById("intermediate_airport_section").appendChild(divSanBayTrungGian);
+    }
+    function xoaSanBayTrungGian(button) {
+        // Xóa div chứa thông tin sân bay trung gian khi người dùng click nút "Xóa"
+        var divSanBayTrungGian = button.closest(".intermediate_airport");
+        divSanBayTrungGian.remove();
+
+        // Cập nhật lại giá trị "STT" của các input
+        var sttInputs = document.getElementsByName("stt[]");
+        for (var i = 0; i < sttInputs.length; i++) {
+            sttInputs[i].value = i + 1;
+        }
+
+        // Giảm số stt cho lần xóa mới
+        sttCount--;
+    }
+</script>
+{% endblock %}

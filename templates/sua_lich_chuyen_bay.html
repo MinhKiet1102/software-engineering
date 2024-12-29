@@ -1,0 +1,162 @@
+{% extends "layout/base.html" %}
+{% block menu %}
+<li class=""><a class="nav-link" href="{{ url_for('authentication_routes.trang_nhan_vien') }}">Trang chủ</a></li>
+<li class=""><a class="nav-link" href="{{ url_for('ban_ve_routes.danh_sach_ban_ve') }}">Bán vé</a></li>
+<li class=""> <a class="nav-link" href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay') }}">Quản Lý Chuyến Bay</a>
+</li>
+<li class=""><a class="nav-mobile-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
+{% endblock %}
+{% block main_content %}
+<h2 class="text-center text-uppercase">Sửa Lịch Chuyến Bay</h2>
+<form method="post" class="grid wide">
+    <!-- Form sửa thông tin lịch chuyến bay -->
+
+    <div class="form-group">
+        <label for="start_date">Ngày Giờ Khởi Hành:</label>
+        <input type="datetime-local" class="form-control" id="start_date" name="start_date"
+            value="{{ schedule_flight.start_date }}" required>
+    </div>
+
+    <div class="form-group">
+        <label for="flight_time">Thời Gian Bay (phút):</label>
+        <input type="number" class="form-control" id="flight_time" name="flight_time" value="{{ 
+            schedule_flight.flight_time}}" required min="{{rule_info.min_flight_time}}">
+    </div>
+
+    <div class="form-group">
+        <label for="quantity_class_1">Số Ghế Hạng 1:</label>
+        <input type="number" class="form-control" id="quantity_class_1" name="quantity_class_1"
+            value="{{ schedule_flight.quantity_class1 }}" required>
+    </div>
+
+    <div class="form-group">
+        <label for="quantity_class_2">Số Ghế Hạng 2:</label>
+        <input type="number" class="form-control" id="quantity_class_2" name="quantity_class_2"
+            value="{{ schedule_flight.quantity_class2 }}" required>
+    </div>
+
+    <!-- Thêm các trường thông tin khác nếu cần -->
+    <!-- Trong phần HTML tương ứng với danh sách sân bay trung gian đã có -->
+    <div id="intermediate_airport_container">
+        {% set max_airports = rule_info.max_intermediate_airport %}
+        {% for intermediate_airport in intermediate_airports_list %}
+        {% if loop.index <= max_airports %} <div class="intermediate_airport">
+            <div class="form-group">
+                <label for="stt">STT:</label>
+                <!-- Hiển thị STT bằng loop.index -->
+                <input type="text" class="form-control" name="stt[]" value="{{ loop.index }}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="intermediate_airport">Sân Bay Trung Gian:</label>
+                <select class="form-control" name="intermediate_airports[]" required>
+                    <!-- Thêm các option từ danh sách sân bay -->
+                    {% for airport in airport_list %}
+                    <option value="{{ airport.abbreviate_name }}" {% if
+                        intermediate_airport.airport_id==airport.abbreviate_name %}selected{% endif %}>
+                        {{ airport.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="stop_time">Thời Gian Dừng (phút):</label>
+                <input type="number" class="form-control" name="stop_time[]"
+                    value="{{ intermediate_airport.stop_time }}" required min="{{ rule_info.min_stop_time }}"
+                    max="{{ rule_info.max_stop_time }}">
+            </div>
+            <div class="form-group">
+                <label for="note">Ghi Chú:</label>
+                <input type="text" class="form-control" name="note[]" value="{{ intermediate_airport.note }}">
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-danger" onclick="xoaSanBayTrungGian(this)">Xóa</button>
+            </div>
+            <hr>
+    </div>
+    {% else %}
+    <!-- Không hiển thị thêm nếu vượt quá max_intermediate_airport -->
+    <p class="text-danger">Không thể thêm sân bay trung gian, vượt quá số lượng tối đa ({{ max_airports }}).</p>
+    {% endif %}
+    {% endfor %}
+
+    </div>
+
+    <!-- Thêm nút để thêm sân bay trung gian -->
+    <button type="button" class="btn btn-success" onclick="themSanBayTrungGian()">Thêm Sân Bay Trung Gian</button>
+    <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
+</form>
+{% endblock %}
+{% block js %}
+<script>
+    // Lấy số lượng sân bay trung gian hiện tại từ phía backend
+    var sttCount = "{{ intermediate_airports_list | length }}"; // Khởi tạo sttCount bằng số lượng sân bay hiện tại
+
+    function themSanBayTrungGian() {
+        var max_intermediate_airport = "{{ rule_info.max_intermediate_airport }}"; // Giới hạn số lượng sân bay trung gian
+        var min_stop_time = "{{ rule_info.min_stop_time }}"; // Thời gian dừng tối thiểu
+        var max_stop_time = "{{ rule_info.max_stop_time }}"; // Thời gian dừng tối đa
+
+        // Kiểm tra nếu số lượng sân bay trung gian đã vượt quá max_intermediate_airport
+        if (sttCount >= max_intermediate_airport) {
+            alert("Không thể thêm sân bay trung gian nữa. Số lượng tối đa là " + max_intermediate_airport);
+            return;
+        }
+
+        // Tạo một div chứa thông tin sân bay trung gian
+        var divSanBayTrungGian = document.createElement("div");
+        divSanBayTrungGian.className = "intermediate_airport";
+
+        // Thêm các trường nhập liệu cho sân bay trung gian
+        divSanBayTrungGian.innerHTML = `
+            <div class="form-group">
+                <label for="stt">STT:</label>
+                <!-- Hiển thị STT bằng sttCount -->
+                <input type="text" class="form-control" name="stt[]" value="${sttCount + 1}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="intermediate_airport">Sân Bay Trung Gian:</label>
+                <select class="form-control" name="intermediate_airports[]" required>
+                    <!-- Thêm các option từ danh sách sân bay -->
+                    {% for airport in airport_list %}
+                        <option value="{{ airport.abbreviate_name }}">{{ airport.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="stop_time">Thời Gian Dừng (phút):</label>
+                <input type="number" class="form-control" name="stop_time[]" required max="${max_stop_time}" min="${min_stop_time}">
+            </div>
+            <div class="form-group">
+                <label for="note">Ghi Chú:</label>
+                <input type="text" class="form-control" name="note[]">
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-danger" onclick="xoaSanBayTrungGian(this)">Xóa</button>
+            </div>
+            <hr>`;
+
+        // Tăng số stt cho lần thêm mới
+        sttCount++;
+
+        // Thêm div vào phần tử chứa sân bay trung gian
+        document.getElementById("intermediate_airport_container").appendChild(divSanBayTrungGian);
+    }
+
+    function xoaSanBayTrungGian(button) {
+        // Xóa div chứa thông tin sân bay trung gian khi người dùng click nút "Xóa"
+        var divSanBayTrungGian = button.closest(".intermediate_airport");
+        divSanBayTrungGian.remove();
+
+        // Cập nhật lại giá trị "STT" của các input
+        var sttInputs = document.getElementsByName("stt[]");
+        for (var i = 0; i < sttInputs.length; i++) {
+            sttInputs[i].value = i + 1; // Cập nhật lại STT khi xóa
+        }
+
+        // Giảm số stt cho lần xóa mới
+        sttCount--;
+    }
+</script>
+
+
+{% endblock %}
