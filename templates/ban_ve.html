@@ -1,63 +1,93 @@
 {% extends "layout/base.html" %}
-{% block menu %}
-{% endblock %}
 {% block main_content %}
-    <h1 class="text-center text-uppercase">Bán vé chuyến bay</h1>
-    <form method="post"
-        action="{{ url_for('ban_ve_routes.ban_ve', id=ticket.id, schedule_flight_id=schedule_flight_id) }}"
-        id="payment-form" class="grid wide">
-        <input type="hidden" name="id" value="{{ ticket.id }}">
-        <input type="hidden" name="schedule_flight_id" value="{{ schedule_flight_id }}">
-        <div class="form-group">
-            <label for="fullname">Họ tên:</label>
-            <input type="text" class="form-control" id="fullname" name="fullname" required maxlength="50">
-        </div>
-        <div class="form-group">
-            <label for="identity_card">CMND/CCCD:</label>
-            <input type="text" class="form-control" id="identity_card" name="identity_card" required maxlength="12">
-        </div>
-        <div class="form-group">
-            <label for="phone_number">Số điện thoại:</label>
-            <input type="tel" class="form-control" id="phone_number" name="phone_number" required maxlength="10">
-        </div>
-        <div class="form-group">
-            <label for="quantity">Nhập số lượng vé muốn bán:</label>
-            <input 
-                type="number" 
-                id="quantity" 
-                name="quantity" 
-                min="1" 
-                max="{{ remaining_tickets }}" 
-                value="1" 
-                required>
-            <small class="form-text text-muted">
-                Số lượng vé còn lại: {{ remaining_tickets }}
-            </small>
-        </div>
-        <div class="form-group">
-            <label for="price">Số tiền(VNĐ):</label>
-            <input type="text" class="form-control" id="price" name="price" value="{{ ticket.price }}" data-price="{{ ticket.price }}" readonly>
-        </div>
+<h1 class="text-center text-uppercase">Bán vé chuyến bay</h1>
+<form method="post"
+    action="{{ url_for('ban_ve_routes.ban_ve', id=ticket_flight.id, schedule_flight_id=schedule_flight_id) }}"
+    id="payment-form" class="grid wide">
+    <input type="hidden" name="id" value="{{ ticket_flight.id }}">
+    <input type="hidden" name="schedule_flight_id" value="{{ schedule_flight_id }}">
+    <div class="form-group">
+        <label for="fullname">Họ tên:</label>
+        <input type="text" class="form-control" id="fullname" name="fullname" required maxlength="50">
+    </div>
 
-        <button type="submit" class="btn btn-primary">Bán vé và thanh toán</button>
-        <a href="{{ url_for('ban_ve_routes.danh_sach_ban_ve') }}" class="btn btn-primary">Trở về</a>
-    </form>
-    {% endblock %}
+
+    <input type="hidden" id="ticket_class" value="{{ ticket_flight.ticket_class }}">
+    <input type="hidden" name="seat_numbers" id="seat_numbers" value="{{ seat_numbers }}">
+
+
+    <div class="form-group">
+        <label for="identity_card">CMND/CCCD:</label>
+        <input type="text" class="form-control" id="identity_card" name="identity_card" required maxlength="12">
+    </div>
+    <div class="form-group">
+        <label for="phone_number">Số điện thoại:</label>
+        <input type="tel" class="form-control" id="phone_number" name="phone_number" required maxlength="10">
+    </div>
+    <!-- Số lượng ghế (readonly) -->
+    <div class="form-group">
+        <label for="quantity">Số lượng vé đã chọn:</label>
+        <input type="number" id="quantity" name="quantity" value="0" readonly>
+        <small class="form-text text-muted">
+            Số lượng vé còn lại: {{ remaining_tickets }}
+        </small>
+    </div>
+
+    <!-- Số tiền (readonly để tránh chỉnh sửa) -->
+    <div class="form-group">
+        <label for="amount">Số tiền:</label>
+        <input type="text" class="form-control" id="amount" name="amount"
+            value="{{ '{:,.0f}'.format(ticket_flight.price).replace(',', '.') }} VNĐ"
+            data-price="{{ ticket_flight.price }}" readonly>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">Bán vé và thanh toán</button>
+    <a href="{{ url_for('ban_ve_routes.ban_ve', id=ticket_flight.id, schedule_flight_id=schedule_flight_id)}}"
+        class="btn btn-primary">Trở về</a>
+</form>
+{% endblock %}
 {% block js %}
 <script>
-    // Lắng nghe sự thay đổi trên trường số lượng
-    document.getElementById('quantity').addEventListener('input', function () {
-        // Lấy giá trị số lượng từ input
-        const quantity = parseInt(this.value) || 1; // Nếu không hợp lệ thì mặc định là 1
+    // Hàm định dạng tiền Việt Nam
+    function formatCurrency(amount) {
+        return amount.toLocaleString('vi-VN') + ' VNĐ'; // Định dạng số và thêm "VNĐ"
+    }
+
+    // Hàm tính tổng tiền
+    function updateTotalAmount() {
+        // Lấy giá trị seat_numbers (chuỗi dạng '4,8' hoặc rỗng)
+        const seatNumbersValue = document.getElementById('seat_numbers').value;
+
+        // Tách các số ghế dựa trên dấu phẩy và đếm
+        const seatCount = seatNumbersValue ? seatNumbersValue.split(',').filter(s => s.trim() !== '').length : 0;
+
+        // Cập nhật số lượng ghế vào trường `quantity` (readonly)
+        document.getElementById('quantity').value = seatCount;
 
         // Lấy giá vé gốc từ thuộc tính `data-price`
-        const pricePerTicket = parseInt(document.getElementById('price').dataset.price);
+        const pricePerTicket = parseInt(document.getElementById('amount').dataset.price) || 0;
 
-        // Tính tổng giá
-        const totalPrice = quantity * pricePerTicket;
+        // Lấy hạng vé từ trường hidden
+        const ticketClass = parseInt(document.getElementById('ticket_class').value) || 1;
 
-        // Cập nhật trường `amount` với tổng giá mới
-        document.getElementById('price').value = totalPrice;
-    });
+        // Xác định phí dịch vụ dựa trên hạng vé
+        const serviceFeePerTicket = ticketClass === 1 ? 150000 : 100000;
+
+        // Tính phí dịch vụ tổng cộng
+        const totalServiceFee = seatCount * serviceFeePerTicket;
+
+        // Tính tổng giá vé (giá vé + phí dịch vụ)
+        const totalPrice = seatCount * pricePerTicket + totalServiceFee;
+
+        // Cập nhật trường `amount` với tổng giá mới đã định dạng
+        document.getElementById('amount').value = formatCurrency(totalPrice);
+    }
+
+    // Lắng nghe thay đổi trên trường `seat_numbers`
+    document.getElementById('seat_numbers').addEventListener('input', updateTotalAmount);
+
+    // Gọi hàm khi trang được load lần đầu (để đồng bộ)
+    updateTotalAmount();
 </script>
 {% endblock %}

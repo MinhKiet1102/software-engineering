@@ -1,0 +1,241 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+}
+
+.container {
+    width: 90%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+h1 {
+    margin-top: 20px;
+    color: #333;
+}
+
+form {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.seat-selection {
+    flex: 7;
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 48%;
+}
+
+.booking-details {
+    flex: 3;
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 48%;
+    margin-left: 30px;
+}
+
+.seat-map {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.seat-row {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 10px;
+}
+
+
+.seat:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.seat.booked {
+    background-color: #ff4d4d;
+    cursor: not-allowed;
+}
+
+.seat.selected {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-confirm {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.btn-confirm:hover {
+    background-color: #0056b3;
+}
+
+.blue-box {
+    width: 30px;
+    /* Chiều rộng của ô vuông */
+    height: 30px;
+    /* Chiều cao của ô vuông */
+    background-color: #007bff;
+    /* Màu xanh biển */
+    border-radius: 5px;
+    /* Bo góc (tùy chọn) */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* Hiệu ứng đổ bóng (tùy chọn) */
+}
+
+.red-box {
+    width: 30px;
+    /* Chiều rộng của ô vuông */
+    height: 30px;
+    /* Chiều cao của ô vuông */
+    background-color: #ff4d4d;
+    /* Màu xanh biển */
+    border-radius: 5px;
+    /* Bo góc (tùy chọn) */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* Hiệu ứng đổ bóng (tùy chọn) */
+}
+
+.note {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.note div {
+    display: flex;
+    align-items: center;
+    margin-right: 5px;
+}
+
+.flight-info {
+    display: flex;
+    justify-content: space-around;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.seat-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.row-label {
+    width: 20px;
+    text-align: center;
+    margin-right: 10px;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.seats {
+    display: flex;
+}
+
+.aisle {
+    width: 50px;
+    /* Khoảng trống giữa 2 dãy ghế */
+}
+
+.seat {
+    width: 60px;
+    height: 60px;
+    background-color: #e0e0e0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 40px;
+    margin-right: 5px;
+}
+
+.seat-1 {
+    background-color: #fdb913;
+    color: black;
+    font-size: 20px;
+}
+
+.seat-2 {
+    font-size: 20px;
+}
+
+.seat-2:hover {
+    cursor: pointer;
+}
+
+.seat-1:hover {
+    cursor: not-allowed;
+    background-color: #fdb913;
+    color: black !important;
+}
+
+.seat.booked {
+    background-color: red;
+    cursor: not-allowed;
+}
+
+.seat:hover:not(.booked) {
+    background-color: 007bff;
+    color: white;
+}
+
+.toilet,
+.kitchen,
+.exit-door {
+    font-size: 18px;
+}
+
+.kitchen-row {
+    font-size: 22px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.exit-doors {
+    font-size: 22px;
+    color: red;
+    display: flex;
+    justify-content: space-between;
+}
+
+.toilet-row {
+    font-size: 22px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.fa-solid {
+    font-size: 22px;
+}

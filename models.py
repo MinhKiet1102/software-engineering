@@ -61,8 +61,6 @@ class Flight(db.Model):
     start_location = db.Column(db.String(100), nullable=False)
     destination = db.Column(db.String(100), nullable=False)
     flight_schedules = relationship('FlightSchedule', backref='flight', lazy=True)
-    ticket = relationship('Ticket', backref='flight', lazy=True)
-    
 
     # Khóa ngoại chỉ ra sân bay đến và sân bay khởi hành
     start_location_id = db.Column(db.String(10), ForeignKey('airports.abbreviate_name'))  # Khóa ngoại cho sân bay khởi hành
@@ -97,15 +95,24 @@ class FlightSchedule(db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     start_date = db.Column(db.DateTime, nullable=False)
     flight_id = db.Column(db.String(10), db.ForeignKey('flights.id', ondelete="CASCADE"), nullable=False)
-
     flight_time = db.Column(db.Float, nullable=False)
-    quantity_class1 = db.Column(db.Integer, nullable=False)
-    quantity_class2 = db.Column(db.Integer, nullable=False)
+    tickets = relationship('Ticket', backref='flight_schedule', lazy=True)
     intermediate_airports = relationship('IntermediateAirport', backref='flight_schedule', lazy=True)
     booking_id = relationship('Booking', backref='flight_schedule', lazy=True)
 
+    
+    def total_tickets_by_class(self):
+        # Tính tổng số vé cho từng loại vé
+        ticket_totals = {}
+        for ticket in self.tickets:
+            total_quantity = ticket.quantity
+            ticket_totals[ticket.ticket_class] = total_quantity
+        return ticket_totals
+
+
     def __str__(self):
         return f"FlightSchedule {self.id} - {self.start_date}"
+
 
 class Booking(db.Model):
     __tablename__ = 'bookings'
@@ -133,13 +140,24 @@ class Ticket(db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     ticket_class = db.Column(db.String(50), nullable=False)
     price = db.Column(db.Integer, nullable=False)
-    flight_id = db.Column(db.String(10), db.ForeignKey('flights.id', ondelete="CASCADE"), nullable=False)
+    flight_schedule_id = db.Column(db.Integer, db.ForeignKey('flight_schedules.id'), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)  # Số lượng vé của loại này
 
     # Quan hệ nhiều - nhiều với Booking qua bảng BookingTicket
     bookings = relationship('BookingTicket', back_populates='ticket', lazy=True)
 
     def __str__(self):
-        return f"Ticket class {self.ticket_class} of {self.flight_id}"
+        return f"Ticket class {self.ticket_class} of {self.flight_schedule_id}"
+
+class Seat(db.Model):
+    __tablename__ = 'seats'
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    seat_number = db.Column(db.String(10), nullable=False)
+    ticket_id = db.Column(db.Integer, db.ForeignKey('tickets.id'), nullable=False)
+    status = db.Column(db.String(10), nullable=False, default='available')
+    booking_ticket_id = db.Column(db.Integer, db.ForeignKey('booking_tickets.id'), nullable=True)
+
+    booking_ticket = relationship('BookingTicket', back_populates='seat')
 
 class BookingTicket(db.Model):
     __tablename__ = 'booking_tickets'
@@ -152,6 +170,9 @@ class BookingTicket(db.Model):
     # Quan hệ với Booking và Ticket
     booking = relationship('Booking', back_populates='tickets')
     ticket = relationship('Ticket', back_populates='bookings')
+
+    # Quan hệ với Seat
+    seat = relationship('Seat', back_populates='booking_ticket', lazy=True)
 
     def __str__(self):
         return f"Booking {self.booking_id} - Ticket {self.ticket_id} - Quantity {self.quantity}"
@@ -173,10 +194,9 @@ class IntermediateAirport(db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     note = db.Column(db.String(255), nullable=True)
     stop_time = db.Column(db.Integer, nullable=False)
-    airport_id = db.Column(db.String(10), db.ForeignKey('airports.abbreviate_name'), nullable=False)
-    flight_schedule_id = db.Column(db.Integer, db.ForeignKey('flight_schedules.id'), nullable=False)
+    airport_id = db.Column(db.String(10), db.ForeignKey('airports.abbreviate_name', ondelete="CASCADE"), nullable=False)
+    flight_schedule_id = db.Column(db.Integer, db.ForeignKey('flight_schedules.id', ondelete="CASCADE"), nullable=False)
     airport = relationship('Airport', backref='intermediate_airports')
 
     def __str__(self):
         return f"IntermediateAirport {self.id}"
-

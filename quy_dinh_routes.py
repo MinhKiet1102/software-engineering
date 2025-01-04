@@ -1,5 +1,4 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, session, request, jsonify
-# from db_utils import cursor, db
 from extensions import db
 from datetime import datetime, timedelta
 import vnpay
@@ -11,11 +10,12 @@ quy_dinh_routes = Blueprint('quy_dinh_routes', __name__)
 
 @quy_dinh_routes.route('/doanh_thu_theo_thang', methods=['GET', 'POST'])
 def doanh_thu_theo_thang():
+    username = session['user']['username']
     if request.method == 'POST':
         month = int(request.form['selected_month'].split("-")[1])
     else:
-        role = session.get('user', {}).get('role', 'Customer')
-        return render_template('doanh_thu_theo_thang.html', role=role)
+        role = session.get('user', {}).get('role', 'Admin')
+        return render_template('doanh_thu_theo_thang.html', role=role, username=username)
 
     if not month:
         return jsonify({"error": "Tháng không được cung cấp"}), 400
@@ -45,21 +45,25 @@ def doanh_thu_theo_thang():
 
     # Đánh số thứ tự cho từng hàng trong data
     data_with_index = [{"index": idx + 1, **row} for idx, row in enumerate(data)]
-
+    role = session.get('role', 'Admin')
+    username = session['user']['username']
     return render_template(
         "doanh_thu_theo_thang.html",
         month=month,
         total_revenue=total_revenue,
-        data=data_with_index
+        data=data_with_index,
+        role=role,
+        username=username
     )
 
 @quy_dinh_routes.route('/thay_doi_quy_dinh', methods=['GET', 'POST'])
 def thay_doi_quy_dinh():
+    username = session['user']['username']
     if request.method == 'GET':
             rule = Rule.query.first()  
 
             role = session.get('user', {}).get('role', 'Customer')
-            return render_template('thay_doi_quy_dinh.html', rule=rule, role=role)
+            return render_template('thay_doi_quy_dinh.html', rule=rule, role=role, username=username)
     elif request.method == 'POST':
         rule = Rule.query.first()  
         # Lấy thông tin từ form
@@ -91,11 +95,12 @@ def thay_doi_quy_dinh():
 
         flash('Cập nhật quy định thành công!')
         return redirect(url_for('chuyen_bay_routes.danh_sach_chuyen_bay_admin'))
-    return render_template('thay_doi_quy_dinh.html', rule=rule)
+    return render_template('thay_doi_quy_dinh.html', rule=rule, username=username)
 
 
 @quy_dinh_routes.route('/bang_thong_ke', methods=['GET', 'POST'])
 def bang_thong_ke():
+    username = session['user']['username']
     # Kiểm tra xem yêu cầu là GET hay POST
     if request.method == 'POST':
         selected_month = request.form['selected_month'].split("-")[1]
@@ -115,7 +120,7 @@ def bang_thong_ke():
     ).join(FlightSchedule, Flight.id == FlightSchedule.flight_id) \
     .join(Booking, FlightSchedule.id == Booking.flight_schedule_id) \
     .join(Payment, Booking.id == Payment.booking_id) \
-    .filter(db.extract('month', FlightSchedule.start_date) == selected_month) \
+    .filter(db.extract('month', Payment.payment_date) == selected_month) \
     .group_by(Flight.start_location, Flight.destination) \
     .all()
 
@@ -133,11 +138,12 @@ def bang_thong_ke():
             'flights': result.total_flights,
             'percentage': revenue_percentage
         })
-
-    # Render template với dữ liệu
+    role = session.get('role', 'Admin')
     return render_template(
         'bang_thong_ke.html',
         data=data,
         total_revenue=total_revenue,
-        selected_month=selected_month
+        selected_month=selected_month,
+        role=role,
+        username=username
     )

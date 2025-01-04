@@ -1,0 +1,59 @@
+{% extends "layout/base.html" %}
+{% block main_content %}
+<h2 class="text-center mb-4 text-uppercase">Bảng Thống Kê Doanh Thu</h2>
+<div class="container" id="report-content">
+    <div class="report-summary">
+        <h3>Tháng: {{ selected_month }}</h3>
+        <p><b>Tổng doanh thu:</b> {{ "{:,.0f}".format(total_revenue).replace(",", ".") }} VNĐ</p>
+    </div>
+
+    <table class="table table-striped mt-4">
+        <thead>
+            <tr>
+                <th>Số thứ tự</th>
+                <th>Tuyến Bay</th>
+                <th>Số Lượt Bay</th>
+                <th>Doanh Thu</th>
+                <th>Tỷ Lệ Doanh Thu (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in data %}
+            <tr>
+                <td>{{ item.index }}</td>
+                <td>{{ item.route }}</td>
+                <td>{{ item.flights }}</td>
+                <td>{{ "{:,.0f}".format(item.revenue).replace(",", ".") }} VNĐ</td>
+                <td>{{ "%.2f" | format(item.percentage) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<button id="export-pdf" class="btn btn-primary btn-export" style="margin-left: 13.7%;">Xuất PDF</button> </div>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+    document.getElementById('export-pdf').addEventListener('click', () => {
+        // Lấy nội dung bảng (vùng chứa cả tiêu đề và bảng)
+        const content = document.getElementById('report-content');
+
+        if (!content) {
+            alert("Không tìm thấy nội dung để xuất PDF.");
+            return;
+        }
+
+        // Cấu hình PDF
+        const options = {
+            margin: 10, // Lề
+            filename: 'bao_cao_doanh_thu.pdf', // Tên file
+            html2canvas: { scale: 2 }, // Tăng độ nét
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } // Định dạng PDF
+        };
+
+        // Xuất PDF
+        html2pdf().set(options).from(content).save();
+    });
+</script>
+{% endblock %}

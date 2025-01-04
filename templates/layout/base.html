@@ -9,6 +9,8 @@
     <link rel="shortcut icon" href="/static/img/logo-icon.png">
     <link rel="stylesheet" href="/static/css/fontawesome-free-6.4.0-web/css/all.css">
     <link rel="stylesheet" href="/static/css/index.css">
+    {% block css1 %}<link rel="stylesheet" href="{{ url_for('static', filename='css/class_1.css') }}">{% endblock %}
+    {% block css2 %}<link rel="stylesheet" href="{{ url_for('static', filename='css/class_2.css') }}">{% endblock %}
     {% block css %}<link rel="stylesheet" href="/static/css/table.css">{% endblock %}
     <script src="/static/js/index.js" defer></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -16,31 +18,28 @@
 </head>
 
 <body >
-    <div class="container mt-5">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <div class="alert alert-info">
-            {{ messages[0] }}
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="flash-overlay">
+        <div class="flash-message">
+            <div class="alert alert-info">
+                {{ messages[0] }}
+            </div>
+            <button class="flash-close-btn">&times;</button>
         </div>
-        {% endif %}
-        {% endwith %}
-        {% block content %}
-        {% endblock %}
-
     </div>
+    {% endif %}
+    {% endwith %}
     <div id="main">
+        {% if role == 'Customer' %}
         <div id="chatbox">
             <div id="chatbox-text">Nhấn vào để chat</div>
             <a class="chatbox-a" href="https://www.facebook.com/AivivuHoChiMinh" target="_blank"><i
                     class="fa-brands fa-facebook-messenger"></i></a>
         </div>
+        {% endif %}
         <div id="header" class="flexbox">
-            <!-- Nút mở nav mobile -->
-            <div class="nav-bar">
-                <i class="fa-solid fa-bars" onclick="navMobile(this)"></i>
-            </div>
-            <!-- Lớp phủ đen khi mở nav mobile -->
-            <div class="nav-overlay" id="overlay" onclick="closeNav(this)"></div>
+           
 
             <div class="nav-mobile" id="mobile">
                 <!-- Nút đóng nav mobile -->
@@ -61,16 +60,16 @@
                         </li>
                     {% elif role == "Staff" %}
                         <li class="">
-                            <a class="nav-link" href="{{ url_for('authentication_routes.trang_nhan_vien') }}">Trang chủ</a>
+                            <a class="nav-mobile-link" href="{{ url_for('authentication_routes.trang_nhan_vien') }}">Trang chủ</a>
                         </li>
                         <li class="">
-                            <a class="nav-link" href="{{ url_for('ban_ve_routes.danh_sach_ban_ve') }}">Bán vé</a>
+                            <a class="nav-mobile-link" href="{{ url_for('ban_ve_routes.danh_sach_ban_ve') }}">Bán vé</a>
                         </li>
                         <li class="">
-                            <a class="nav-link" href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay') }}">Quản Lý Chuyến Bay</a>
+                            <a class="nav-mobile-link" href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay') }}">Quản Lý Chuyến Bay</a>
                         </li>
                         <li class="">
-                            <a class="nav-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a>
+                            <a class="nav-mobile-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a>
                         </li>
                     {% elif role == "Admin" %}
                         <li class="">
@@ -111,19 +110,80 @@
                          {% else %}
                             {{ url_for('authentication_routes.index') }} <!-- Default URL nếu không có role -->
                          {% endif %}">
-                    <img src="/static/img/logo.png" alt="Logo">
+                    <img style="margin-right: 150px" src="/static/img/logo.png" alt="Logo">
                 </a>
             </div>
            
             <!-- nav menu trên PC -->
-            <ul class="nav flexbox"> <!-- class flexbox dùng để đặt nhanh vào những vị trí cần flex -->
-                {% block menu%}
-                <li class=""><a class="nav-link" href="{{ url_for('authentication_routes.trang_nhan_vien') }}">Trang chủ</a></li>
-                <li class=""><a class="nav-link" href="{{ url_for('ban_ve_routes.danh_sach_ban_ve') }}">Bán vé</a></li>
-                <li class=""> <a class="nav-link" href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay') }}">Quản Lý Chuyến Bay</a></li>
-                <li class=""><a class="nav-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
-                {% endblock %}
-            </ul>
+            <div class="nav-container">
+                <!-- Danh sách menu giữa -->
+                <ul class="nav menu-center mr-3">
+                    {% if role == "Customer" %}
+                        <li class="">
+                            <a class="nav-mobile-link" href="{{ url_for('authentication_routes.trang_khach_hang') }}">Trang chủ</a>
+                        </li>
+                        <li class="">
+                            <a class="nav-mobile-link" href="{{ url_for('dat_ve_routes.danh_sach_dat_ve') }}">Đặt vé</a>
+                        </li>
+                        <li class="">
+                            <a class="nav-mobile-link" href="{{ url_for('dat_ve_routes.danh_sach_ve_da_dat') }}">Thông tin đặt vé</a>
+                        </li>
+
+                    {% elif role == "Staff" %}
+                        <li class="">
+                            <a class="nav-mobile-link" href="{{ url_for('authentication_routes.trang_nhan_vien') }}">Trang chủ</a>
+                        </li>
+                        <li class="">
+                            <a class="nav-mobile-link" href="{{ url_for('ban_ve_routes.danh_sach_ban_ve') }}">Bán vé</a>
+                        </li>
+                        <li class="">
+                            <a class="nav-mobile-link" href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay') }}">Quản Lý Chuyến Bay</a>
+                        </li>
+                    {% elif role == "Admin" %}
+                        <li class="">
+                            <a class="nav-mobile-link" href="{{ url_for('authentication_routes.trang_admin') }}">Trang chủ</a>
+                        </li>
+                        <li class="">
+                            <a class="nav-mobile-link" href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay_admin') }}">Quản lý chuyến bay</a>
+                        </li>
+                        <li class="">
+                            <a class="nav-mobile-link" href="{{ url_for('san_bay_routes.danh_sach_san_bay') }}">Quản lý sân bay</a>
+                        </li>
+                        <li class="">
+                            <a class="nav-mobile-link" href="{{ url_for('quy_dinh_routes.thay_doi_quy_dinh') }}">Quy định</a>
+                        </li>
+                        <li class="">
+                            <a class="nav-mobile-link" href="{{ url_for('quy_dinh_routes.doanh_thu_theo_thang') }}">Báo cáo</a>
+                        </li>
+                        <li class="">
+                            <a class="nav-mobile-link" href="{{ url_for('register.them_tai_khoan_admin') }}">Thêm tài khoản</a>
+                        </li>
+                    {% else %}
+                        <!-- Nếu không xác định được quyền -->
+                        <li class="">
+                            <a class="nav-mobile-link" href="{{ url_for('authentication_routes.index') }}">Đăng nhập</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            
+                <!-- Danh sách căn phải -->
+                <ul class="nav menu-right">
+                    <!-- Hiển thị tên người dùng -->
+                    <li class="nav-item dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="color: aqua !important;">
+                            Xin chào, {{ username }}
+                        </a>
+                        <!-- Menu dropdown hiển thị khi hover -->
+                        {% if role == "Customer" %}
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('dat_ve_routes.profile') }}">Hồ sơ của tôi</a></li>
+                        </ul>
+                        {% endif %}
+                    </li>
+                    <li ><a class="nav-mobile-link mt-1" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
+                </ul>
+                
+            </div>            
         </div>
     </div>
     {% block main_content %}
@@ -135,6 +195,31 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const flashOverlay = document.querySelector('.flash-overlay');
+        const flashMessage = document.querySelector('.flash-message');
+        const closeBtn = document.querySelector('.flash-close-btn');
+
+        // Đóng thông báo khi nhấn vào nút close
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function () {
+                if (flashOverlay) {
+                    flashOverlay.style.display = 'none';
+                }
+            });
+        }
+
+        // Đóng thông báo khi click ra ngoài vùng flash-message
+        if (flashOverlay) {
+            flashOverlay.addEventListener('click', function (event) {
+                if (!flashMessage.contains(event.target)) { // Nếu không click vào bên trong flash-message
+                    flashOverlay.style.display = 'none'; // Ẩn thông báo
+                }
+            });
+        }
+    });
+</script>
 {% block js %}
 {% endblock %}
 </html>

@@ -11,7 +11,7 @@ from quy_dinh_routes import quy_dinh_routes
 from san_bay_routes import san_bay_routes
 from extensions import db
 from forgot import ForgotPassword
-from models import Customer, Staff, User, Admin, Flight, FlightSchedule, IntermediateAirport, Airport, Booking, Payment, Rule, Ticket, BookingTicket
+from models import Customer, Staff, User, Admin, Flight, FlightSchedule, IntermediateAirport, Airport, Booking, Payment, Rule, Ticket, BookingTicket, Seat
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 
@@ -20,7 +20,7 @@ from flask_admin.contrib.sqla import ModelView
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:123456@localhost/airlineticket_db1?charset=utf8mb4'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/airlineticket_db5?charset=utf8mb4'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 db.init_app(app)
@@ -28,8 +28,8 @@ db.init_app(app)
 
 # Register the authentication routes Blueprint
 app.register_blueprint(authentication_routes, url_prefix='/')
-app.register_blueprint(register_bp)
-app.register_blueprint(ForgotPassword)
+app.register_blueprint(register_bp, url_prefix='/')
+app.register_blueprint(ForgotPassword, url_prefix='/')
 app.register_blueprint(dat_ve_routes, url_prefix='/')
 app.register_blueprint(chuyen_bay_routes, url_prefix='/')
 app.register_blueprint(ban_ve_routes, url_prefix='/')
@@ -69,6 +69,7 @@ admin.add_view(ModelView(Ticket, db.session))
 admin.add_view(MyBookingView(Booking, db.session))
 admin.add_view(ModelView(Payment, db.session))
 admin.add_view(ModelView(BookingTicket, db.session))
+admin.add_view(ModelView(Seat, db.session))
 
 if __name__ == '__main__':
     with app.app_context(): 

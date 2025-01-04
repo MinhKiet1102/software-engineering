@@ -1,0 +1,92 @@
+{% extends "layout/base.html" %}
+{% block main_content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+<div class="container mt-5 add-account">
+
+    <form id="registerForm">
+        <div class="form-group">
+            <label>Loại Tài Khoản</label>
+            <select class="form-control" id="role" name="role" required>
+                <option value="Staff">Nhân viên</option>
+                <option value="Admin">Quản trị</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Tên Đăng Nhập</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+        </div>
+
+        <div class="form-group">
+            <label>Họ Và Tên</label>
+            <input type="text" class="form-control" id="fullname" name="fullname" required>
+        </div>
+
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+
+        <div class="form-group">
+            <label>Số Điện Thoại</label>
+            <input type="text" class="form-control" id="phone_number" name="phone_number" required>
+        </div>
+
+        <div class="form-group">
+            <label>Mật Khẩu</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+
+        <div class="form-group">
+            <label>Xác Nhận Mật Khẩu</label>
+            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Tạo tài khoản</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('registerForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm_password').value;
+
+        if (password !== confirmPassword) {
+            alert('Mật khẩu xác nhận không khớp!');
+            return;
+        }
+
+        const formData = {
+            role: document.getElementById('role').value,
+            username: document.getElementById('username').value,
+            fullname: document.getElementById('fullname').value,
+            email: document.getElementById('email').value,
+            phone_number: document.getElementById('phone_number').value,
+            password: password
+        };
+
+        fetch('/register_staff_admin', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    // Có thể chuyển hướng hoặc làm mới form
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra');
+            });
+    });
+</script>
+{% endblock %}

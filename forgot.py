@@ -5,15 +5,13 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from extensions import db
 from models import User
-import hashlib  # Để mã hóa mật khẩu
+import hashlib 
 
 ForgotPassword = Blueprint('ForgotPassword', __name__)
 
-# Email tài khoản gửi OTP
 SENDER_EMAIL = "aivivu2016@gmail.com"
 SENDER_PASSWORD = "foej pojr trve zagc" 
 
-# Lưu OTP tạm thời
 otp_storage = {}
 
 
@@ -36,10 +34,10 @@ def forgot_password():
 
     # Gửi email OTP kèm link verify_otp
     try:
-        verify_link = request.url_root + url_for('ForgotPassword.verify_otp')  # URL verify OTP
+        verify_link = request.url_root + url_for('ForgotPassword.verify_otp') 
         send_otp_email(email, otp, verify_link)
         flash('Mã OTP đã được gửi đến email của bạn.', 'success')
-        session['email'] = email  # Lưu email để xử lý bước tiếp theo
+        session['email'] = email  
         return redirect(url_for('ForgotPassword.verify_otp'))
     except Exception as e:
         flash('Không thể gửi email. Vui lòng thử lại sau.', 'error')
@@ -83,7 +81,7 @@ def reset_password():
         return redirect(url_for('ForgotPassword.reset_password'))
 
     # Cập nhật mật khẩu mới vào cơ sở dữ liệu
-    hashed_password = hashlib.md5(new_password.encode()).hexdigest()  # Mã hóa mật khẩu
+    hashed_password = hashlib.md5(new_password.encode()).hexdigest()  
     user = User.query.filter_by(email=email).first()
 
     if user:
@@ -95,7 +93,7 @@ def reset_password():
         session.pop('email', None)
 
         flash('Mật khẩu của bạn đã được cập nhật thành công!', 'success')
-        return redirect(url_for('authentication_routes.index'))  # Điều hướng về trang đăng nhập
+        return redirect(url_for('authentication_routes.index'))  
     else:
         flash('Không tìm thấy người dùng với email này!', 'error')
         return redirect(url_for('ForgotPassword.forgot_password'))

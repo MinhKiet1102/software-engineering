@@ -1,0 +1,152 @@
+{% extends "layout/base.html" %}
+{% block css %}
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    tr {
+        page-break-inside: avoid;
+        /* Ngăn cắt giữa hàng */
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid black;
+    }
+
+    .page-break {
+        page-break-before: always;
+    }
+</style>
+{% endblock %}
+{% block main_content %}
+<form action="" class="grid wide mt-5">
+    <h1 class="mb-2" style="margin-top: 100px;">Thông tin khách hàng</h1>
+    <div class="col-md-6">
+        <p><strong>Mã đặt vé:</strong> {{ booking_info.id }}</p>
+        <p><strong>Họ tên:</strong> {{ booking_info.fullname }}</p>
+        <p><strong>CMND/CCCD:</strong> {{ booking_info.identity_card }}</p>
+        <p><strong>Số điện thoại:</strong> {{ booking_info.phone_number }}</p>
+    </div>
+
+    <h1 class="mb-2 mt-3">Thông tin chuyến bay</h1>
+    <div class="col-md-6">
+        <p><strong>Sân bay đi:</strong> {{ flight_info.airport_departure }}</p>
+        <p><strong>Sân bay đến:</strong> {{ flight_info.airport_arrival }}</p>
+        <p><strong>Ngày giờ khởi hành:</strong> {{ flight_info.start_date }}</p>
+        <p><strong>Thời gian bay:</strong> {{ "%.0f"|format(flight_info.flight_time) }} phút</p>
+        <p><strong>Tổng số tiền thanh toán:</strong> {{ "{:,.0f}".format(total_amount).replace(",", ".") }} VNĐ</p>
+    </div>
+
+    <h1 class="mt-3 mb-2">Thông tin vé:</h1>
+    <table class="text-center">
+        <thead>
+            <tr>
+                <th>Hạng vé</th>
+                <th>Giá/1 vé</th>
+                <th>Phí dịch vụ/1 vé</th>
+                <th>Mã lịch chuyến bay</th>
+                <th>Số lượng</th>
+                <th>Số ghế</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ ticket_details_html | safe }}
+        </tbody>
+    </table>
+
+    <div class="mt-4">
+        <button type="button" class="btn btn-primary" onclick="exportToPDF()">Xuất PDF</button>
+    </div>
+</form>
+{% endblock %}
+{% block js %}
+<script>
+    function exportToPDF() {
+        // Lấy thông tin cơ bản từ các phần tử HTML được render bởi Jinja2
+        var id = '{{ booking_info.id }}';
+        var fullname = '{{ booking_info.fullname }}';
+        var identity_card = '{{ booking_info.identity_card }}';
+        var airport_departure = '{{ flight_info.airport_departure }}';
+        var airport_arrival = '{{ flight_info.airport_arrival }}';
+        var start_date = '{{ flight_info.start_date }}';
+        var flight_time = '{{ flight_info.flight_time }}';
+        var phone_number = '{{ booking_info.phone_number }}';
+        var total_quantity = '{{ total_quantity }}';
+        var total_amount = '{{ total_amount }}';
+        var formattedAmount = new Intl.NumberFormat('vi-VN').format(total_amount);
+
+        // Lấy danh sách vé từ bảng HTML
+        var danhSachVe = [];
+        var rows = document.querySelectorAll("table tbody tr");
+        rows.forEach(row => {
+            var cells = row.querySelectorAll("td");
+            if (cells.length === 6) { // Đảm bảo chỉ xử lý các hàng có đủ 4 cột
+                danhSachVe.push({
+                    hang_ve: cells[0].textContent.trim(),
+                    gia: cells[1].textContent.trim(),
+                    phi: cells[2].textContent.trim(),
+                    ma_chuyen_bay: cells[3].textContent.trim(),
+                    so_luong: cells[4].textContent.trim(),
+                    so_ghe: cells[5].textContent.trim()
+                });
+            }
+        });
+
+        // Tạo nội dung HTML cho PDF
+        var htmlContent = `
+            <div style="margin: 50px auto; width: 80%; font-family: Arial, sans-serif;">
+                <h2 style="margin-bottom: 10px;">Thông tin khách hàng</h2>
+                <p><strong>Mã đặt vé:</strong> ${id}</p>
+                <p><strong>Họ tên:</strong> ${fullname}</p>
+                <p><strong>CMND/CCCD:</strong> ${identity_card}</p>
+                <p><strong>Số điện thoại:</strong> ${phone_number}</p>
+                <h2 style="margin-top: 30px; margin-bottom: 10px;">Thông tin chuyến bay</h2>
+                <p><strong>Sân bay đi:</strong> ${airport_departure}</p>
+                <p><strong>Sân bay đến:</strong> ${airport_arrival}</p>
+                <p><strong>Ngày giờ khởi hành:</strong> ${start_date} </p>
+                <p><strong>Thời gian bay (phút):</strong> ${flight_time} phút</p>
+                <p><strong>Tổng số tiền thanh toán:</strong> ${formattedAmount} VNĐ</p>
+                <h2 style="margin-top: 30px; margin-bottom: 10px;">Thông tin vé</h2>
+                <table style="width: 100%; border-collapse: collapse; text-align: center;">
+                    <thead>
+                        <tr>
+                            <th style="border: 1px solid #000; padding: 8px;">Hạng vé</th>
+                            <th style="border: 1px solid #000; padding: 8px;">Giá/1 vé</th>
+                            <th style="border: 1px solid #000; padding: 8px;">Phí dịch vụ/1 vé</th>
+                            <th style="border: 1px solid #000; padding: 8px;">Mã lịch chuyến bay</th>
+                            <th style="border: 1px solid #000; padding: 8px;">Số lượng</th>
+                            <th style="border: 1px solid #000; padding: 8px;">Số ghế</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${danhSachVe.map(ve => `
+                            <tr>
+                                <td style="border: 1px solid #000; padding: 8px;">${ve.hang_ve}</td>
+                                <td style="border: 1px solid #000; padding: 8px;">${ve.gia}</td>
+                                <td style="border: 1px solid #000; padding: 8px;">${ve.phi}</td>
+                                <td style="border: 1px solid #000; padding: 8px;">${ve.ma_chuyen_bay}</td>
+                                <td style="border: 1px solid #000; padding: 8px;">${ve.so_luong}</td>
+                                <td style="border: 1px solid #000; padding: 8px;">${ve.so_ghe}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        // Tạo PDF bằng html2pdf
+        html2pdf().set({
+            margin: 10,
+            filename: 'booked_ticket_information.pdf',
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).from(htmlContent).save();
+    }
+</script>
+
+
+{% endblock %}

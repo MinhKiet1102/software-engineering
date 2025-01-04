@@ -1,0 +1,74 @@
+{% extends "layout/base.html" %}
+{% block main_content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+<style>
+    .profile {
+        display: flex; 
+        align-items: flex-start; 
+        justify-content: space-between;
+        gap: 30px; 
+        margin-top: 30px; 
+    }
+    
+    .profile > div {
+        flex: 1; 
+        padding: 20px; 
+        border: 1px solid #ccc;
+        border-radius: 8px; 
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+        background-color: #fff; 
+    }
+    
+    h2 {
+        text-align: center; 
+        margin-bottom: 20px; 
+    }
+    
+    .container {
+        max-width: 1200px; 
+        margin: 0 auto; 
+    }
+    
+</style>
+<div class="container profile add-account">
+    <!-- Khung Thông tin cá nhân -->
+    <div>
+        <h2>Thông tin cá nhân</h2>
+        <form method="POST" action="{{ url_for('dat_ve_routes.profile') }}">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" class="form-control" id="username" name="username" value="{{ customer.username }}" required>
+            </div>
+            <div class="form-group">
+                <label for="fullname">Họ và tên:</label>
+                <input type="text" class="form-control" id="fullname" name="fullname" value="{{ customer.fullname }}" required>
+            </div>
+            <div class="form-group">
+                <label for="phone_number">Số điện thoại:</label>
+                <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ customer.phone_number }}" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ customer.email }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Cập nhật</button>
+        </form>
+    </div>
+
+    <!-- Khung Thay đổi mật khẩu -->
+    <div>
+        <h2>Thay đổi mật khẩu</h2>
+        <form method="POST" action="{{ url_for('dat_ve_routes.profile') }}">
+            <div class="form-group">
+                <label for="new_password">Mật khẩu mới:</label>
+                <input type="password" class="form-control" id="new_password" name="new_password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">Xác nhận mật khẩu mới:</label>
+                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3" name="change_password">Đổi mật khẩu</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

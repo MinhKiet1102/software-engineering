@@ -1,24 +1,11 @@
 {% extends "layout/base.html" %}
-{% block menu %}
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('authentication_routes.trang_admin') }}">Trang chủ</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay_admin') }}">Quản lý chuyến bay</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('san_bay_routes.danh_sach_san_bay') }}">Quản lý sân bay</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('quy_dinh_routes.thay_doi_quy_dinh') }}">Quy định</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('quy_dinh_routes.doanh_thu_theo_thang') }}">Báo cáo</a></li>
-    <li class=""><a class="nav-mobile-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
-{% endblock %}
 {% block main_content %}
 
 <h2 class="text-center text-uppercase">Sửa Lịch Chuyến Bay</h2>
 <form method="post" class="grid wide">
     <!-- Form sửa thông tin lịch chuyến bay -->
 
-    
+
     <div class="form-group">
         <label for="start_date">Ngày Giờ Khởi Hành:</label>
         <input type="datetime-local" class="form-control" id="start_date" name="start_date"
@@ -27,21 +14,11 @@
 
     <div class="form-group">
         <label for="flight_time">Thời Gian Bay (phút):</label>
-        <input type="number" class="form-control" id="flight_time" name="flight_time"
-            value="{{ "%.0f"|format( schedule_flight.flight_time) }}" required min="{{rule_info.min_flight_time}}">
+        <input type="number" class="form-control" id="flight_time" name="flight_time" value="{{ " %.0f"|format(
+            schedule_flight.flight_time) }}" required min="{{rule_info.min_flight_time}}">
     </div>
 
-    <div class="form-group">
-        <label for="quantity_class_1">Số Ghế Hạng 1:</label>
-        <input type="number" class="form-control" id="quantity_class_1" name="quantity_class_1"
-            value="{{ schedule_flight.quantity_class1 }}" required>
-    </div>
 
-    <div class="form-group">
-        <label for="quantity_class_2">Số Ghế Hạng 2:</label>
-        <input type="number" class="form-control" id="quantity_class_2" name="quantity_class_2"
-            value="{{ schedule_flight.quantity_class2 }}" required>
-    </div>
 
     <!-- Thêm các trường thông tin khác nếu cần -->
     <!-- Trong phần HTML tương ứng với danh sách sân bay trung gian đã có -->
@@ -171,4 +148,3 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.8/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 {% endblock %}
-

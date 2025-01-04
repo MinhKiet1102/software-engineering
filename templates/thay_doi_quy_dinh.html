@@ -1,58 +1,43 @@
 {% extends "layout/base.html" %}
-{% block menu %}
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('authentication_routes.trang_admin') }}">Trang chủ</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay_admin') }}">Quản lý chuyến bay</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('san_bay_routes.danh_sach_san_bay') }}">Quản lý sân bay</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('quy_dinh_routes.thay_doi_quy_dinh') }}">Quy định</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('quy_dinh_routes.doanh_thu_theo_thang') }}">Báo cáo</a></li>
-    <li class=""><a class="nav-mobile-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
-{% endblock %}
 {% block main_content %}
-<h2 class="mb-4" style="text-align: center;">Thay Đổi Quy Định</h2>
-    <form method="POST" action="{{ url_for('quy_dinh_routes.thay_doi_quy_dinh') }}" class="grid wide">
-        <div class="form-group">
-            <label for="quantity_airport">Số Lượng Sân Bay:</label>
-            <input type="number" class="form-control" id="quantity_airport" name="quantity_airport"
-                value="{{ rule.quantity_airport}}" required>
-        </div>
-        <div class="form-group">
-            <label for="min_flight_time">Thời Gian Bay Tối Thiểu (phút):</label>
-            <input type="number" class="form-control" id="min_flight_time" name="min_flight_time"
-                value="{{ rule.min_flight_time }}" required>
-        </div>
-        <div class="form-group">
-            <label for="max_intermediate_airport">Số Sân Bay Trung Gian Tối Đa:</label>
-            <input type="number" class="form-control" id="max_intermediate_airport"
-                name="max_intermediate_airport" value="{{ rule.max_intermediate_airport }}" required>
-        </div>
-        <div class="form-group">
-            <label for="min_stop_time">Thời Gian Dừng Tối Thiểu (phút):</label>
-            <input type="number" class="form-control" id="min_stop_time" name="min_stop_time"
-                value="{{ rule.min_stop_time }}" required>
-        </div>
-        <div class="form-group">
-            <label for="max_stop_time">Thời Gian Dừng Tối Đa (phút):</label>
-            <input type="number" class="form-control" id="max_stop_time" name="max_stop_time"
-                value="{{ rule.max_stop_time }}" required>
-        </div>
-        <div class="form-group">
-            <label for="time_buy">Số Giờ Đặt Vé Trước:</label>
-            <input type="number" class="form-control" id="time_buy" name="time_buy"
-                value="{{ rule.time_buy }}" required>
-        </div>
-        <div class="form-group">
-            <label for="time_sell">Số Giờ Bán Vé Trước:</label>
-            <input type="number" class="form-control" id="time_sell" name="time_sell"
-                value="{{ rule.time_sell }}" required>
-        </div>
+<h2 class="mb-4 text-uppercase" style="text-align: center;">Thay Đổi Quy Định</h2>
+<form method="POST" action="{{ url_for('quy_dinh_routes.thay_doi_quy_dinh') }}" class="grid wide">
+    <div class="form-group">
+        <label for="quantity_airport">Số Lượng Sân Bay:</label>
+        <input type="number" class="form-control" id="quantity_airport" name="quantity_airport"
+            value="{{ rule.quantity_airport}}" required>
+    </div>
+    <div class="form-group">
+        <label for="min_flight_time">Thời Gian Bay Tối Thiểu (phút):</label>
+        <input type="number" class="form-control" id="min_flight_time" name="min_flight_time"
+            value="{{ rule.min_flight_time }}" required>
+    </div>
+    <div class="form-group">
+        <label for="max_intermediate_airport">Số Sân Bay Trung Gian Tối Đa:</label>
+        <input type="number" class="form-control" id="max_intermediate_airport" name="max_intermediate_airport"
+            value="{{ rule.max_intermediate_airport }}" required>
+    </div>
+    <div class="form-group">
+        <label for="min_stop_time">Thời Gian Dừng Tối Thiểu (phút):</label>
+        <input type="number" class="form-control" id="min_stop_time" name="min_stop_time"
+            value="{{ rule.min_stop_time }}" required>
+    </div>
+    <div class="form-group">
+        <label for="max_stop_time">Thời Gian Dừng Tối Đa (phút):</label>
+        <input type="number" class="form-control" id="max_stop_time" name="max_stop_time"
+            value="{{ rule.max_stop_time }}" required>
+    </div>
+    <div class="form-group">
+        <label for="time_buy">Số Giờ Đặt Vé Trước:</label>
+        <input type="number" class="form-control" id="time_buy" name="time_buy" value="{{ rule.time_buy }}" required>
+    </div>
+    <div class="form-group">
+        <label for="time_sell">Số Giờ Bán Vé Trước:</label>
+        <input type="number" class="form-control" id="time_sell" name="time_sell" value="{{ rule.time_sell }}" required>
+    </div>
 
-        <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
-    </form>
+    <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
+</form>
 {% endblock %}
 {% block js %}
 {% endblock %}

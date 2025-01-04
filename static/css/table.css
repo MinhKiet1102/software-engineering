@@ -37,7 +37,7 @@
 
 /* Bao bọc bảng để thêm thanh cuộn */
 .table-wrapper {
-    max-height: 300px; /* Chiều cao cố định của bảng */
+    max-height: 400px; /* Chiều cao cố định của bảng */
     overflow-y: auto; /* Thanh cuộn dọc */
     overflow-x: hidden; /* Ẩn thanh cuộn ngang */
     border: 1px solid #ddd; /* Đường viền bao quanh bảng */

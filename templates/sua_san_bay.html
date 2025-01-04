@@ -1,44 +1,31 @@
 {% extends "layout/base.html" %}
-{% block menu %}
-<li class=""><a class="nav-mobile-link"
-    href="{{ url_for('authentication_routes.trang_admin') }}">Trang chủ</a></li>
-<li class=""><a class="nav-mobile-link"
-    href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay_admin') }}">Quản lý chuyến bay</a></li>
-<li class=""><a class="nav-mobile-link"
-    href="{{ url_for('san_bay_routes.danh_sach_san_bay') }}">Quản lý sân bay</a></li>
-<li class=""><a class="nav-mobile-link"
-    href="{{ url_for('quy_dinh_routes.thay_doi_quy_dinh') }}">Quy định</a></li>
-<li class=""><a class="nav-mobile-link"
-    href="{{ url_for('quy_dinh_routes.doanh_thu_theo_thang') }}">Báo cáo</a></li>
-<li class=""><a class="nav-mobile-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
-{% endblock %}
 {% block main_content %}
 <h2 class="text-center text-uppercase">Sửa Sân Bay</h2>
-<form method="post"
-action="{{ url_for('san_bay_routes.sua_san_bay', airport_id=airport.abbreviate_name) }}" 
-class="grid wide">
+<form method="post" action="{{ url_for('san_bay_routes.sua_san_bay', airport_id=airport.abbreviate_name) }}"
+    class="grid wide">
 
-<div class="form-group">
-    <label for="abbreviate_name">Mã Sân Bay</label>
-    <input value="{{airport.abbreviate_name}}" type="text" class="form-control" id="abbreviate_name" name="abbreviate_name" required>
-</div>
+    <div class="form-group">
+        <label for="abbreviate_name">Mã Sân Bay</label>
+        <input value="{{airport.abbreviate_name}}" type="text" class="form-control" id="abbreviate_name"
+            name="abbreviate_name" required>
+    </div>
 
-<div class="form-group">
-    <label for="flight_time">Tên Sân Bay:</label>
-    <input value="{{airport.name}}" type="name" class="form-control" id="name" name="name" required>
-</div>
+    <div class="form-group">
+        <label for="flight_time">Tên Sân Bay:</label>
+        <input value="{{airport.name}}" type="name" class="form-control" id="name" name="name" required>
+    </div>
 
-<div class="form-group">
-    <label for="location">Địa Điểm</label>
-    <input value="{{airport.location}}" type="text" class="form-control" id="location" name="location" required>
-</div>
+    <div class="form-group">
+        <label for="location">Địa Điểm</label>
+        <input value="{{airport.location}}" type="text" class="form-control" id="location" name="location" required>
+    </div>
 
-<div class="form-group">
-    <label for="nation">Quốc Gia</label>
-    <input value="{{airport.nation}}" type="text" class="form-control" id="nation" name="nation" required>
-</div>
+    <div class="form-group">
+        <label for="nation">Quốc Gia</label>
+        <input value="{{airport.nation}}" type="text" class="form-control" id="nation" name="nation" required>
+    </div>
 
-<button type="submit" class="btn btn-primary">Xác nhận</button>
+    <button type="submit" class="btn btn-primary">Xác nhận</button>
 </form>
 {% endblock %}
 {% block js %}

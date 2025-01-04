@@ -1,33 +1,26 @@
 {% extends "layout/base.html" %}
-{% block menu %}
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('authentication_routes.trang_admin') }}">Trang chủ</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay_admin') }}">Quản lý chuyến bay</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('san_bay_routes.danh_sach_san_bay') }}">Quản lý sân bay</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('quy_dinh_routes.thay_doi_quy_dinh') }}">Quy định</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('quy_dinh_routes.doanh_thu_theo_thang') }}">Báo cáo</a></li>
-    <li class=""><a class="nav-mobile-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
-{% endblock %}
 {% block main_content %}
-<h2 class="text-center">Sửa Vé Chuyến Bay</h2>
-    <form method="post" class="grid wide">
-        <input type="hidden" id="ma_ve" name="ma_ve" value="{{ flight_ticket.ma_ve }}">
-        <div class="form-group">
-            <label for="ticket_class">Hạng Vé:</label>
-            <input type="text" class="form-control" id="ticket_class" name="ticket_class" value="{{ flight_ticket.ticket_class }}" required>
-        </div>
+<h2 class="text-center text-uppercase">Sửa Vé Chuyến Bay</h2>
+<form method="post" class="grid wide">
+    <input type="hidden" id="ma_ve" name="ma_ve" value="{{ flight_ticket.ma_ve }}">
+    <div class="form-group">
+        <label for="ticket_class">Hạng Vé:</label>
+        <input type="text" class="form-control" id="ticket_class" name="ticket_class"
+            value="{{ flight_ticket.ticket_class }}" required>
+    </div>
 
-        <div class="form-group">
-            <label for="price">Giá:</label>
-            <input type="text" class="form-control" id="price" name="price" value="{{ flight_ticket.price }}" required>
-        </div>
+    <div class="form-group">
+        <label for="price">Giá:</label>
+        <input type="text" class="form-control" id="price" name="price" value="{{ flight_ticket.price }}" required>
+    </div>
+    <div class="form-group">
+        <label for="quantity">Số lượng</label>
+        <input type="number" class="form-control" id="price" value="{{ flight_ticket.quantity }}" name="quantity"
+            required>
+    </div>
 
-        <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
-    </form>
+    <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
+</form>
 {% endblock %}
 {% block js %}
 {% endblock %}

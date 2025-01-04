@@ -1,10 +1,4 @@
 {% extends "layout/base.html" %}
-{% block menu %}
-<li class=""><a class="nav-mobile-link" href="{{ url_for('authentication_routes.trang_khach_hang') }}">Trang chủ</a>
-</li>
-<li class="nav-item"><a class="nav-mobile-link" href="{{ url_for('dat_ve_routes.danh_sach_dat_ve') }}">Đặt vé</a></li>
-<li class=""><a class="nav-mobile-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
-{% endblock %}
 {% block main_content %}
 <h1 class="text-center text-uppercase mt-5">Đặt vé chuyến bay</h1>
 <form method="post" action="{{ url_for('dat_ve_routes.vnpay_payment') }}" id="payment-form" class="grid wide">
@@ -15,6 +9,8 @@
         <input type="hidden" name="language" value="vn">
     </div>
 
+    <input type="hidden" id="ticket_class" value="{{ ticket_flight.ticket_class }}">
+
     <!-- Mã khách hàng (hidden) -->
     <input type="hidden" name="customer_id" value="{{ session['user']['id'] }}">
     <!-- Mã vé (hidden input) -->
@@ -23,6 +19,8 @@
     <!-- Mã lịch chuyến bay (hidden input) -->
     <input type="hidden" name="schedule_flight_id" value="{{ schedule_flight_id }}">
 
+    <!-- Số ghế -->
+    <input type="hidden" name="seat_numbers" id="seat_numbers" value="{{ seat_numbers }}">
     <!-- Họ tên -->
     <div class="form-group">
         <label for="fullname">Họ tên:</label>
@@ -44,9 +42,10 @@
             pattern="[0-9]{10}" placeholder="Nhập số điện thoại">
     </div>
 
+    <!-- Số lượng ghế (readonly) -->
     <div class="form-group">
-        <label for="quantity">Nhập số lượng vé muốn đặt:</label>
-        <input type="number" id="quantity" name="quantity" min="1" max="{{ remaining_tickets }}" value="1" required>
+        <label for="quantity">Số lượng vé đã chọn:</label>
+        <input type="number" id="quantity" name="quantity" value="0" readonly>
         <small class="form-text text-muted">
             Số lượng vé còn lại: {{ remaining_tickets }}
         </small>
@@ -55,7 +54,8 @@
     <!-- Số tiền (readonly để tránh chỉnh sửa) -->
     <div class="form-group">
         <label for="amount">Số tiền:</label>
-        <input type="text" class="form-control" id="amount" name="amount" value="{{ '{:,.0f}'.format(ticket_flight.price).replace(',', '.') }} VNĐ"
+        <input type="text" class="form-control" id="amount" name="amount"
+            value="{{ '{:,.0f}'.format(ticket_flight.price).replace(',', '.') }} VNĐ"
             data-price="{{ ticket_flight.price }}" readonly>
     </div>
 
@@ -77,11 +77,8 @@
     <!-- Mã ngân hàng -->
     <div class="form-group">
         <label for="bank_code">Ngân hàng:</label>
-        <!-- Input chỉ hiển thị tên ngân hàng và readonly -->
         <input type="text" class="form-control" id="bank_code_display" value="Ngân hàng TMCP Quốc Dân – NCB" readonly>
-        <!-- Hidden input để gửi giá trị thực 'NCB' -->
         <input type="hidden" id="bank_code" name="bank_code" value="NCB">
-        <!-- Hiển thị thông báo nhỏ -->
         <small class="form-text text-muted">
             Chỉ nhận thanh toán qua Ngân hàng TMCP Quốc Dân – NCB.
         </small>
@@ -100,7 +97,8 @@
 
     <!-- Nút gửi form -->
     <button type="submit" class="btn btn-primary">Đặt vé và thanh toán</button>
-    <a href="{{ url_for('dat_ve_routes.danh_sach_dat_ve') }}" class="btn btn-secondary">Trở về</a>
+    <a href="{{ url_for('dat_ve_routes.dat_ve', id=ticket_flight.id, schedule_flight_id=schedule_flight.id)}}"
+        class="btn btn-secondary">Trở về</a>
 </form>
 {% endblock %}
 {% block js %}
@@ -110,20 +108,42 @@
         return amount.toLocaleString('vi-VN') + ' VNĐ'; // Định dạng số và thêm "VNĐ"
     }
 
-    // Lắng nghe sự thay đổi trên trường số lượng
-    document.getElementById('quantity').addEventListener('input', function () {
-        // Lấy giá trị số lượng từ input
-        const quantity = parseInt(this.value) || 1; // Nếu không hợp lệ thì mặc định là 1
+    // Hàm tính tổng tiền
+    function updateTotalAmount() {
+        // Lấy giá trị seat_numbers (chuỗi dạng '4,8' hoặc rỗng)
+        const seatNumbersValue = document.getElementById('seat_numbers').value;
+
+        // Tách các số ghế dựa trên dấu phẩy và đếm
+        const seatCount = seatNumbersValue ? seatNumbersValue.split(',').filter(s => s.trim() !== '').length : 0;
+
+        // Cập nhật số lượng ghế vào trường `quantity` (readonly)
+        document.getElementById('quantity').value = seatCount;
 
         // Lấy giá vé gốc từ thuộc tính `data-price`
-        const pricePerTicket = parseInt(document.getElementById('amount').dataset.price);
+        const pricePerTicket = parseInt(document.getElementById('amount').dataset.price) || 0;
 
-        // Tính tổng giá
-        const totalPrice = quantity * pricePerTicket;
+        // Lấy hạng vé từ trường hidden
+        const ticketClass = parseInt(document.getElementById('ticket_class').value) || 1;
+
+        // Xác định phí dịch vụ dựa trên hạng vé
+        const serviceFeePerTicket = ticketClass === 1 ? 150000 : 100000;
+
+        // Tính phí dịch vụ tổng cộng
+        const totalServiceFee = seatCount * serviceFeePerTicket;
+
+        // Tính tổng giá vé (giá vé + phí dịch vụ)
+        const totalPrice = seatCount * pricePerTicket + totalServiceFee;
 
         // Cập nhật trường `amount` với tổng giá mới đã định dạng
         document.getElementById('amount').value = formatCurrency(totalPrice);
-    });
+    }
+
+    // Lắng nghe thay đổi trên trường `seat_numbers`
+    document.getElementById('seat_numbers').addEventListener('input', updateTotalAmount);
+
+    // Gọi hàm khi trang được load lần đầu (để đồng bộ)
+    updateTotalAmount();
 </script>
+
 
 {% endblock %}

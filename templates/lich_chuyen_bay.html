@@ -5,42 +5,46 @@
 <h4 class="text-center">Chuyến Bay: {{ flight_id }}</h4>
 
 <!-- Nút thêm mới lịch chuyến bay -->
-<a href="{{ url_for('lich_chuyen_bay_routes.them_lich_chuyen_bay', flight_id=flight_id) }}"
-    class="btn btn-success" style="margin-left: 10%;">Thêm mới</a>
+<a href="{{ url_for('lich_chuyen_bay_routes.them_lich_chuyen_bay', flight_id=flight_id) }}" class="btn btn-success"
+    style="margin-left: 10%;">Thêm mới</a>
 
 <!-- Bảng hiển thị danh sách lịch chuyến bay -->
 <div class="table-wrapper">
-<table class="table mx-auto" style="width: 80%;">
-    <thead>
-        <tr>
-            <th scope="col">Mã Lịch Chuyến Bay</th>
-            <th scope="col">Ngày Giờ Khởi Hành</th>
-            <th scope="col">Thời Gian Bay</th>
-            <th scope="col">Số Ghế Hạng 1</th>
-            <th scope="col">Số Ghế Hạng 2</th>
-            <th scope="col">Thao Tác</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for schedule_flight in schedule_flight_list %}
-        <tr>
-            <td>{{ schedule_flight.id }}</td>
-            <td>{{ schedule_flight.start_date}}</td>
-            <td>{{ "%.0f"|format(schedule_flight.flight_time) }} phút</td>
-            <td>{{ schedule_flight.quantity_class1 }}</td>
-            <td>{{ schedule_flight.quantity_class2 }}</td>
-            <td>
-                <!-- Thao tác sửa -->
-                <a href="{{ url_for('lich_chuyen_bay_routes.sua_lich_chuyen_bay', flight_schedule_id=schedule_flight.id) }}"
-                    class="btn btn-warning">Sửa</a>
-                <!-- Thao tác xóa -->
-                <a href="{{ url_for('lich_chuyen_bay_routes.xoa_lich_chuyen_bay', flight_schedule_id=schedule_flight.id) }}"
-                    class="btn btn-danger">Xóa</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <table class="table mx-auto" style="width: 80%;">
+        <thead>
+            <tr>
+                <th scope="col">Mã Lịch Chuyến Bay</th>
+                <th scope="col">Ngày Giờ Khởi Hành</th>
+                <th scope="col">Thời Gian Bay</th>
+                {% for ticket_class in ticket_classes %}
+                <th>Tổng số vé {{ ticket_class }}</th>
+                {% endfor %}
+                <th scope="col">Thao Tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for schedule_flight in schedule_flight_list %}
+            <tr>
+                <td class="align-middle">{{ schedule_flight.id }}</td>
+                <td class="align-middle">{{ (schedule_flight.start_date).strftime('%H:%M - %d/%m/%Y')}}</td>
+                <td class="align-middle">{{ "%.0f"|format(schedule_flight.flight_time) }} phút</td>
+                {% for ticket_class in ticket_classes %}
+                <td class="align-middle">{{ schedule_flight.total_tickets_by_class()[ticket_class] }}</td>
+                {% endfor %}
+                <td>
+                    <a href="{{ url_for('ve_chuyen_bay_routes.ve_chuyen_bay_staff', flight_id=flight_id) }}"
+                        class="btn btn-primary">Vé chuyến bay</a>
+                    <!-- Thao tác sửa -->
+                    <a href="{{ url_for('lich_chuyen_bay_routes.sua_lich_chuyen_bay', flight_schedule_id=schedule_flight.id) }}"
+                        class="btn btn-warning">Sửa</a>
+                    <!-- Thao tác xóa -->
+                    <a href="{{ url_for('lich_chuyen_bay_routes.xoa_lich_chuyen_bay', flight_schedule_id=schedule_flight.id) }}"
+                        class="btn btn-danger">Xóa</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}
 {% block js %}

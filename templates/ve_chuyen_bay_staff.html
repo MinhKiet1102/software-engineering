@@ -1,0 +1,39 @@
+{% extends "layout/base.html" %}
+{% block main_content %}
+
+<h2 class="text-center text-uppercase">Danh Sách Vé Chuyến Bay {{ flight_id }}</h2>
+<a href="{{ url_for('ve_chuyen_bay_routes.them_ve_chuyen_bay_staff', flight_id=flight_id) }}" class="btn btn-success"
+    style="margin-left: 10%;">Thêm vé mới</a>
+<table class="table mt-3 mx-auto" style="width: 80%;">
+    <thead>
+        <tr>
+            <th scope="col">Mã vé</th>
+            <th scope="col">Hạng vé</th>
+            <th scope="col">Giá</th>
+            <th scope="col">Số lượng</th>
+            <th scope="col">Mã lịch bay</th>
+            <th scope="col">Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ticket in ticket_list %}
+        <tr>
+            <td class="align-middle">{{ ticket.id }}</td>
+            <td class="align-middle">{{ ticket.ticket_class }}</td>
+            <td class="align-middle">{{ "{:,.0f}".format(ticket.price).replace(",", ".") }} VNĐ</td>
+            <td class="align-middle">{{ ticket.quantity }}</td>
+            <td class="align-middle">{{ ticket.flight_schedule_id }}</td>
+            <td class="align-middle">
+                <form action="{{ url_for('ve_chuyen_bay_routes.xoa_ve_chuyen_bay_staff', ticket_id=ticket.id) }}"
+                    method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger"
+                        onclick="return confirm('Bạn có chắc chắn muốn xóa vé này?');">Xóa</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+{% block js %}
+{% endblock %}

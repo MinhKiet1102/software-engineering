@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, session, request
-from db_utils import authenticate_user
-from models import Airport, Flight
+from models import Airport, Flight, User
 from extensions import db
+import hashlib
 
 authentication_routes = Blueprint('authentication_routes', __name__)
 
@@ -57,7 +57,8 @@ def trang_admin():
     # Kiểm tra quyền truy cập của người dùng
     if 'user' in session and session['user']['role'] == 'Admin':
         role = session['user']['role']
-        return render_template('trang_admin.html', role=role)
+        username = session['user']['username']
+        return render_template('trang_admin.html', role=role, username=username)
     else:
         flash('Truy cập bị từ chối. Vui lòng đăng nhập với tư cách Admin.', 'error')
         return redirect(url_for('.dang_nhap'))
@@ -67,7 +68,8 @@ def trang_nhan_vien():
     # Kiểm tra quyền truy cập của người dùng
     if 'user' in session and session['user']['role'] == 'Staff':
         role = session['user']['role']
-        return render_template('trang_nhan_vien.html', role=role)
+        username = session['user']['username']
+        return render_template('trang_nhan_vien.html', role=role, username=username)
     else:
         flash('Truy cập bị từ chối. Vui lòng đăng nhập với tư cách Nhân viên.', 'error')
         return redirect(url_for('.dang_nhap'))
@@ -77,10 +79,9 @@ def trang_nhan_vien():
 def trang_khach_hang():
     # Lấy quyền của người dùng từ session
     role = session.get('user', {}).get('role', 'Customer')
+    username = session['user']['username']
 
     # Lấy danh sách sân bay để hiển thị form tìm kiếm
-    # airport_departur_list = db.session.query(Airport).join(Flight, Flight.airport_departure == Airport.id).distinct().all()
-    # airport_arrival_list = db.session.query(Airport).join(Flight, Flight.airport_arrival == Airport.id).distinct().all()
     airport_departure_list = db.session.query(Airport).all()
     airport_arrival_list = db.session.query(Airport).all()
 
@@ -89,7 +90,19 @@ def trang_khach_hang():
         role=role,
         airport_departure_list=airport_departure_list,
         airport_arrival_list=airport_arrival_list,
-        airport_departure_selected='',  # Không có giá trị mặc định
+        airport_departure_selected='',  
         airport_arrival_selected='',
-        start_date=''
+        start_date='',
+        username=username
     )
+def authenticate_user(email, password):
+    """Xác thực người dùng dựa trên email và mật khẩu."""
+    # Tìm người dùng qua email
+    user = User.query.filter_by(email=email).first()
+
+    # Kiểm tra người dùng và so khớp mật khẩu
+    if user:
+        hashed_password = hashlib.md5(password.encode()).hexdigest()  
+        if user.password == hashed_password:  
+            return user
+    return None

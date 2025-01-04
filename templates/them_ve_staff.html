@@ -1,0 +1,37 @@
+{% extends "layout/base.html" %}
+{% block main_content %}
+<div class="container">
+    <h2 class="text-center text-uppercase">Thêm Vé Mới cho Chuyến Bay {{ flight_id }}</h2>
+    <form method="POST" action="{{ url_for('ve_chuyen_bay_routes.them_ve_chuyen_bay_staff', flight_id=flight_id) }}">
+        <div class="form-group">
+            <label for="ticket_class">Hạng vé</label>
+            <input type="text" class="form-control" id="ticket_class" name="ticket_class" required pattern="1|2"
+                title="Chỉ chấp nhận giá trị 1 hoặc 2">
+        </div>
+
+        <div class="form-group">
+            <label for="price">Giá vé</label>
+            <input type="number" class="form-control" id="price" name="price" required>
+        </div>
+        <div class="form-group">
+            <label for="quantity">Số lượng</label>
+            <input type="number" class="form-control" id="price" name="quantity" required>
+        </div>
+        <div class="form-group">
+            <label for="airport_departure">Mã lịch bay</label>
+            <select class="form-control" id="flight_schedule_id" name="flight_schedule_id">
+                {% for flight_schedule in flight_schedules %}
+                <option value="{{ flight_schedule.id }}">
+                    {{ flight_schedule.id }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Thêm Vé</button>
+        <a href="{{ url_for('ve_chuyen_bay_routes.ve_chuyen_bay_staff', flight_id=flight_id) }}"
+            class="btn btn-secondary mt-3" style="display: flex ;align-items: center;">Quay lại</a>
+    </form>
+</div>
+{% endblock %}
+{% block js %}
+{% endblock %}

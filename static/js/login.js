@@ -1,12 +1,18 @@
 // Xử lý form đăng ký
 document.getElementById("registerForm").addEventListener("submit", function (e) {
     e.preventDefault();
+
     const username = document.getElementById("username").value;
     const fullname = document.getElementById("fullname").value;
     const email = document.getElementById("email").value;
-    const phone = document.getElementById("phone").value;
+    const phone_number = document.getElementById("phone_number").value.trim();
     const password = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
+
+    if (!phone_number) {
+        alert("Vui lòng nhập số điện thoại!");
+        return;
+    }
 
     if (password !== confirmPassword) {
         alert("Mật khẩu và Xác nhận mật khẩu không khớp!");
@@ -18,13 +24,12 @@ document.getElementById("registerForm").addEventListener("submit", function (e) 
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username, fullname, email, phone, password, confirmPassword })
+        body: JSON.stringify({ username, fullname, email, phone_number, password })
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
             alert(data.message);
-            // window.location.href = "/login.html";  // Chuyển đến trang đăng nhập
         } else {
             alert(data.message);
         }
@@ -33,6 +38,7 @@ document.getElementById("registerForm").addEventListener("submit", function (e) 
         alert("Lỗi đăng ký: " + error.message);
     });
 });
+
 
 
 

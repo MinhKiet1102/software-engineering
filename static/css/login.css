@@ -1,6 +1,5 @@
 body {
     font-family: Arial, sans-serif;
-    background: linear-gradient(to right, #6a11cb, #2575fc);
     color: #fff;
     display: flex;
     justify-content: center;
@@ -9,8 +8,14 @@ body {
     margin: 0;
 }
 
+.add-account {
+    background-color: #fff !important;
+    color: black;
+}
+
+
 .container {
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.85);
     padding: 20px 30px;
     border-radius: 10px;
     width: 100%;
@@ -18,10 +23,20 @@ body {
     text-align: center;
 }
 
+.background-image {
+    background-image: url(../img/background.jpg);
+    background-size: cover; /* Thay contain bằng cover */
+    background-position: center; /* Đặt hình ảnh căn giữa */
+    background-repeat: no-repeat;
+    height: 100vh;
+    width: 100%; /* Đảm bảo background lấp đầy chiều rộng */
+}
+
+
 .container h2 {
     margin-bottom: 20px;
-    font-size: 24px;
-    color: #f9ca24;
+    font-size: 26px;
+    color: #1414a7;
 }
 
 form {
@@ -38,7 +53,7 @@ form input {
 }
 
 form button {
-    background: #6a11cb;
+    background: #1414a7;
     color: white;
     padding: 10px;
     font-size: 18px;
@@ -52,7 +67,7 @@ form button:hover {
 }
 
 a {
-    color: #f9ca24;
+    color: #1414a7;
     text-decoration: none;
 }
 

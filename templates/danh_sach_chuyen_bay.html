@@ -1,0 +1,48 @@
+{% extends "layout/base.html" %}
+{% block main_content %}
+<h2 class="text-center text-uppercase">Danh Sách Chuyến Bay</h2>
+<div class="table-wrapper">
+    <table class="table mt-3 mx-auto" style="width: 80%; text-align: center;">
+        <thead>
+            <tr>
+                <th scope="col">Mã Chuyến Bay</th>
+                <th scope="col">Sân Bay Đi</th>
+                <th scope="col">Sân Bay Đến</th>
+                <th scope="col">Thao Tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for flight in flight_list %}
+            <tr>
+                <!-- Hiển thị mã chuyến bay -->
+                <td class="align-middle">{{ flight.id }}</td>
+
+                <!-- Hiển thị tên sân bay đi -->
+                <td class="align-middle">{{ flight.airport_departure.name }} ({{ flight.start_location_id }})</td>
+
+                <!-- Hiển thị tên sân bay đến -->
+                <td class="align-middle">{{ flight.airport_arrival.name }} ({{ flight.destination_id }})</td>
+
+                <!-- Các nút chức năng -->
+                <td>
+                    {% if role == "Admin" %}
+                    <a href="{{ url_for('chuyen_bay_routes.sua_chuyen_bay', flight_id=flight.id) }}"
+                        class="btn btn-warning">Sửa</a>
+                    <a href="{{ url_for('chuyen_bay_routes.xoa_chuyen_bay', flight_id=flight.id) }}"
+                        class="btn btn-danger">Xóa</a>
+                    <a href="{{ url_for('ve_chuyen_bay_routes.ve_chuyen_bay', flight_id=flight.id) }}"
+                        class="btn btn-primary">Vé chuyến bay</a>
+                    {% endif %}
+
+                    <a href="{{ url_for('lich_chuyen_bay_routes.lich_chuyen_bay', flight_id=flight.id) }}"
+                        class="btn btn-success">Lịch chuyến bay</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+</div>
+{% endblock %}
+{% block js %}
+{% endblock %}

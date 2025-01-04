@@ -1,16 +1,9 @@
 {% extends "layout/base.html" %}
-{% block menu %}
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('authentication_routes.trang_admin') }}">Trang chủ</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay_admin') }}">Quản lý chuyến bay</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('san_bay_routes.danh_sach_san_bay') }}">Quản lý sân bay</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('quy_dinh_routes.thay_doi_quy_dinh') }}">Quy định</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('quy_dinh_routes.doanh_thu_theo_thang') }}">Báo cáo</a></li>
-    <li class=""><a class="nav-mobile-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
-{% endblock %}
 {% block main_content %}
+<div id="slider" style="height: 100vh;">
+        <div class="btn-changeImg-right" onclick="changeBackgroundImageRight(this)"><i
+            class="fa-solid fa-chevron-right"></i></div>
+        <div class="btn-changeImg-left" onclick="changeBackgroundImageLeft(this)"><i
+            class="fa-solid fa-chevron-left"></i></div>
+    </div>
 {% endblock %}

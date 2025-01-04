@@ -1,0 +1,204 @@
+{% extends "layout/base.html" %}
+{% block main_content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/class_1.css') }}">
+<div class="container mt-5">
+
+
+    <div class="content">
+        <form method="post"
+            action="{{ url_for('ban_ve_routes.xac_nhan_ban_ve', id=ticket_flight.id, schedule_flight_id=schedule_flight.id) }}">
+            <div class="seat-selection">
+                <input type="hidden" name="ticket_id" value="{{ ticket_flight.id }}">
+                <input type="hidden" name="schedule_flight_id" value="{{ schedule_flight.id }}">
+                <div class="header">
+                    <div class="flight-info">
+                        <div style="margin-right:15px;">✈️<span style="color: #304558;">Chuyến Bay:</span> {{
+                            schedule_flight.flight_id }}</div>
+                        <div style="margin-right:15px;">📅<span style="color: #304558;">Ngày: </span>{{
+                            schedule_flight.start_date.strftime('%d/%m/%Y') }}</div>
+                        <div>⏰<span style="color: #304558;">Giờ:</span> {{ schedule_flight.start_date.strftime('%H:%M')
+                            }}</div>
+                    </div>
+                </div>
+                <h2>Chọn Chỗ Ngồi</h2>
+                <div class="note">
+                    <div>
+                        <div class="blue-box"></div><span>Đã chọn</span>
+                    </div>
+                    <div>
+                        <div class="red-box"></div><span>Đã đặt</span>
+                    </div>
+                    <div class="toilet">
+                        <i class="fa-solid fa-restroom"></i>
+                        <span style="margin-left: 5px;">Phòng vệ sinh</span>
+                    </div>
+                    <div class="kitchen">
+                        <i class="fa-solid fa-utensils"></i>
+                        <span style="margin-left: 5px;">Phòng bếp</span>
+                    </div>
+                    <div class="exit-door">
+                        <i class="fa-solid fa-door-open" style="color: red;"></i>
+                        <span style="margin-left: 5px;">Cửa ra vào</span>
+                    </div>
+                </div>
+                <div class="seat-map">
+                    <div>
+                        <div>
+
+                            <div class="section-header">
+                                <div style="text-align: center;font-size:25px">Ghế hạng 1</div>
+                                <hr />
+                            </div>
+                            <div class="exit-doors">
+                                <i class="fa-solid fa-door-open"></i>
+                                <i class="fa-solid fa-door-open"></i>
+                            </div>
+                            <div class="kitchen-row top-kitchen">
+                                <i class="fa-solid fa-utensils"></i>
+                                <i class="fa-solid fa-utensils"></i>
+                                <i class="fa-solid fa-utensils"></i>
+                            </div>
+                            <div class="seat-layout">
+                                {% for row in range(0, (total_seats_class_1 + 3) // 4) %}
+                                <div class="row">
+                                    <div class="row-label">{{ 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[row] }}</div>
+                                    <div class="seats">
+                                        {% for col in range(1, 5) %}
+                                        {% if row * 4 + col <= total_seats_class_1 %} <button type="button"
+                                            class="seat-1 seat {% if (row * 4 + col)|string in booked_seats_list_class_1 %}booked{% endif %}"
+                                            data-seat="{{ row * 4 + col }}">
+                                            {{ row * 4 + col }}
+                                            </button>
+                                            {% endif %}
+                                            {% if col == 2 %}
+                                            <div class="aisle"></div>
+                                            {% endif %}
+                                            {% endfor %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div class="toilet-row bottom-toilets">
+                                <i class="fa-solid fa-restroom"></i>
+                                <i class="fa-solid fa-restroom"></i>
+                                <i class="fa-solid fa-restroom"></i>
+                                <i class="fa-solid fa-restroom"></i>
+                            </div>
+                            <div class="section-header">
+                                <div style="text-align: center;font-size:25px">Ghế hạng 2</div>
+                                <hr />
+                            </div>
+                            <!-- Icon cửa ra vào hai bên -->
+                            <div class="exit-doors">
+                                <i class="fa-solid fa-door-open"></i>
+                                <i class="fa-solid fa-door-open"></i>
+                            </div>
+                            <div class="kitchen-row top-kitchen">
+                                <i class="fa-solid fa-utensils"></i>
+                                <i class="fa-solid fa-utensils"></i>
+                                <i class="fa-solid fa-utensils"></i>
+                            </div>
+
+                            <div class="seat-layout">
+                                {% for row in range(0, (total_seats_class_2 + 3) // 4) %}
+                                <div class="row">
+                                    <div class="row-label">{{ 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[row] }}</div>
+                                    <div class="seats">
+                                        {% for col in range(1, 5) %}
+                                        {% if row * 4 + col <= total_seats_class_2 %} <button type="button"
+                                            class="seat-2 seat {% if (row * 4 + col)|string in booked_seats_list_class_2 %}booked{% endif %}"
+                                            data-seat="{{ row * 4 + col }}" disabled>
+                                            {{ row * 4 + col }}
+                                            </button>
+                                            {% endif %}
+                                            {% if col == 2 %}
+                                            <div class="aisle"></div>
+                                            {% endif %}
+                                            {% endfor %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div class="toilet-row bottom-toilets">
+                                <i class="fa-solid fa-restroom"></i>
+                                <i class="fa-solid fa-restroom"></i>
+                                <i class="fa-solid fa-restroom"></i>
+                                <i class="fa-solid fa-restroom"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="seat_numbers" id="seat_numbers">
+            </div>
+            <div class="booking-details">
+                <h2>Chi Tiết Bán Vé</h2>
+                <p>Hành Trình: {{ schedule_flight.flight.start_location }} - {{ schedule_flight.flight.destination }}
+                </p>
+                <p>Hạng Ghế: {{ ticket_flight.ticket_class }}</p>
+                <p>Số Ghế: <span id="selected-seat">Chưa chọn</span></p>
+                <p>Giá Vé Cơ Bản: <span id="base-price">{{ "{:,.0f}".format(ticket_flight.price).replace(",", ".")
+                        }}</span> VND</p>
+                <p>Phí Dịch Vụ: <span id="service-fee">0</span> VND</p>
+                <p>
+                    <strong>
+                        Tổng Cộng: <span id="total-price">0</span> VND
+                    </strong>
+                </p>
+                <button type="submit" class="btn-confirm">Tiếp Tục Bán Vé</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const basePrice = parseInt(document.getElementById('base-price').innerText.replace(/\./g, ''), 10);
+        const serviceFeePerSeat = 150000;
+        const selectedSeatElement = document.getElementById('selected-seat');
+        const serviceFeeElement = document.getElementById('service-fee');
+        const totalPriceElement = document.getElementById('total-price');
+        let selectedSeats = []; // Lưu danh sách các ghế được chọn
+
+        // Hàm cập nhật chi tiết đặt chỗ
+        function updateBookingDetails() {
+            const seatCount = selectedSeats.length;
+            const totalServiceFee = seatCount * serviceFeePerSeat;
+            const totalPrice = (seatCount * basePrice) + totalServiceFee;
+
+            // Cập nhật thông tin trên giao diện
+            selectedSeatElement.innerText = selectedSeats.join(', ') || 'Chưa chọn';
+            serviceFeeElement.innerText = totalServiceFee.toLocaleString('vi-VN');
+            totalPriceElement.innerText = totalPrice.toLocaleString('vi-VN');
+
+            // Cập nhật giá trị cho hidden input (nếu cần gửi lên server)
+            document.getElementById('seat_numbers').value = selectedSeats.join(',');
+        }
+
+        // Gắn sự kiện click cho các ghế
+        document.querySelectorAll('.seat').forEach(seat => {
+            // Chỉ thêm sự kiện click vào các ghế chưa bị booked
+            if (!seat.classList.contains('booked')) {
+                seat.addEventListener('click', function () {
+                    const seatNumber = this.dataset.seat;
+
+                    // Kiểm tra ghế đã được chọn hay chưa
+                    if (selectedSeats.includes(seatNumber)) {
+                        // Bỏ chọn ghế
+                        selectedSeats = selectedSeats.filter(seat => seat !== seatNumber);
+                        this.classList.remove('selected');
+                    } else {
+                        // Thêm ghế vào danh sách được chọn
+                        selectedSeats.push(seatNumber);
+                        this.classList.add('selected');
+                    }
+
+                    // Cập nhật chi tiết đặt chỗ
+                    updateBookingDetails();
+                });
+            }
+        });
+    });
+</script>
+
+
+{% endblock %}

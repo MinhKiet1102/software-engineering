@@ -1,8 +1,7 @@
 {% extends "layout/base.html" %}
 {% block main_content %}
 <h2 class="text-center text-uppercase">Thêm Lịch Chuyến Bay</h2>
-    <form method="post"
-    action="{{ url_for('lich_chuyen_bay_routes.them_lich_chuyen_bay', flight_id=flight_id) }}" 
+<form method="post" action="{{ url_for('lich_chuyen_bay_routes.them_lich_chuyen_bay', flight_id=flight_id) }}"
     class="grid wide">
     <!-- Form nhập thông tin lịch chuyến bay -->
 
@@ -15,20 +14,11 @@
     <!-- Thời gian bay -->
     <div class="form-group">
         <label for="flight_time">Thời Gian Bay (phút):</label>
-        <input type="number" class="form-control" id="flight_time" name="flight_time" required min="{{ rule_info.min_flight_time }}">
+        <input type="number" class="form-control" id="flight_time" name="flight_time" required
+            min="{{ rule_info.min_flight_time }}">
     </div>
 
-    <!-- Số ghế hạng 1 -->
-    <div class="form-group">
-        <label for="quantity_class1">Số Ghế Hạng 1:</label>
-        <input type="number" class="form-control" id="quantity_class1" name="quantity_class1" required>
-    </div>
 
-    <!-- Số ghế hạng 2 -->
-    <div class="form-group">
-        <label for="quantity_class2">Số Ghế Hạng 2:</label>
-        <input type="number" class="form-control" id="quantity_class2" name="quantity_class2" required>
-    </div>
 
     <!-- Sân bay trung gian -->
     <div id="intermediate_airport_section">

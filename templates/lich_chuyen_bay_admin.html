@@ -1,25 +1,25 @@
 {% extends "layout/base.html" %}
-{% block menu %}
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('authentication_routes.trang_admin') }}">Trang chủ</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay_admin') }}">Quản lý chuyến bay</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('san_bay_routes.danh_sach_san_bay') }}">Quản lý sân bay</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('quy_dinh_routes.thay_doi_quy_dinh') }}">Quy định</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('quy_dinh_routes.doanh_thu_theo_thang') }}">Báo cáo</a></li>
-    <li class=""><a class="nav-mobile-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
-{% endblock %}
 {% block main_content %}
+{% if not schedule_flight_list %}
+<tr>
+    <td colspan="{{ 3 + ticket_classes|length }}" class="text-center">Không tìm thấy kết quả phù hợp.</td>
+</tr>
+{% endif %}
 <h2 class="text-center text-uppercase">Danh Sách Lịch Chuyến Bay</h2>
 <!-- Hiển thị thông tin chuyến bay -->
 <h4 class="text-center">Chuyến Bay: {{ flight_id }}</h4>
 
+<!-- Thanh tìm kiếm -->
+<form action="{{ url_for('lich_chuyen_bay_routes.lich_chuyen_bay', flight_id=flight_id) }}" method="GET"
+    class="d-flex mb-3" style="width: 80%; margin: 0 auto;">
+    <input type="text" name="search" class="form-control" placeholder="Nhập từ khóa tìm kiếm..."
+        value="{{ request.args.get('search', '') }}">
+    <button type="submit" class="btn btn-primary ms-2">Tìm kiếm</button>
+</form>
+
 <!-- Nút thêm mới lịch chuyến bay -->
-<a href="{{ url_for('lich_chuyen_bay_routes.them_lich_chuyen_bay', flight_id=flight_id) }}"
-    class="btn btn-success" style="margin-left: 10%;">Thêm mới</a>
+<a href="{{ url_for('lich_chuyen_bay_routes.them_lich_chuyen_bay', flight_id=flight_id) }}" class="btn btn-success"
+    style="margin-left: 10%;">Thêm mới</a>
 
 <!-- Bảng hiển thị danh sách lịch chuyến bay -->
 <table class="table mx-auto" style="width: 80%;">
@@ -28,8 +28,9 @@
             <th scope="col">Mã Lịch Chuyến Bay</th>
             <th scope="col">Ngày Giờ Khởi Hành</th>
             <th scope="col">Thời gian bay</th>
-            <th scope="col">Số ghế hạng 1</th>
-            <th scope="col">Số ghế hạng 2</th>
+            {% for ticket_class in ticket_classes %}
+            <th>Tổng số vé {{ ticket_class }}</th>
+            {% endfor %}
             <!-- Thêm các cột thông tin khác nếu cần -->
             <th scope="col">Thao Tác</th>
         </tr>
@@ -38,10 +39,11 @@
         {% for schedule_flight in schedule_flight_list %}
         <tr>
             <td>{{ schedule_flight.id }}</td>
-            <td>{{ schedule_flight.start_date }}</td>
-            <td>{{ "%.0f"|format(schedule_flight.flight_time)  }} phút</td>
-            <td>{{ schedule_flight.quantity_class1 }}</td>
-            <td>{{ schedule_flight.quantity_class2 }}</td>
+            <td>{{ (schedule_flight.start_date)}}</td>
+            <td>{{ "%.0f"|format(schedule_flight.flight_time) }} phút</td>
+            {% for ticket_class in ticket_classes %}
+            <td>{{ schedule_flight.total_tickets_by_class()[ticket_class] }}</td>
+            {% endfor %}
             <td>
                 <a href="{{ url_for('lich_chuyen_bay_routes.sua_lich_chuyen_bay', flight_schedule_id=schedule_flight.id) }}"
                     class="btn btn-warning">Sửa</a>

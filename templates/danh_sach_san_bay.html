@@ -1,21 +1,17 @@
 {% extends "layout/base.html" %}
-{% block menu %}
-<li class=""><a class="nav-mobile-link"
-    href="{{ url_for('authentication_routes.trang_admin') }}">Trang chủ</a></li>
-<li class=""><a class="nav-mobile-link"
-    href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay_admin') }}">Quản lý chuyến bay</a></li>
-<li class=""><a class="nav-mobile-link"
-    href="{{ url_for('san_bay_routes.danh_sach_san_bay') }}">Quản lý sân bay</a></li>
-<li class=""><a class="nav-mobile-link"
-    href="{{ url_for('quy_dinh_routes.thay_doi_quy_dinh') }}">Quy định</a></li>
-<li class=""><a class="nav-mobile-link"
-    href="{{ url_for('quy_dinh_routes.doanh_thu_theo_thang') }}">Báo cáo</a></li>
-<li class=""><a class="nav-mobile-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
-{% endblock %}
 {% block main_content %}
 <h2 class="text-center text-uppercase">Danh Sách Sân Bay Hiện Có</h2>
-    <a href="{{ url_for('san_bay_routes.them_san_bay') }}" class="btn btn-success my-3" style="margin-left: 10%;">Thêm mới</a>
-    <div class="table-wrapper">
+<!-- Ô nhập tìm kiếm -->
+<form method="get" action="{{ url_for('san_bay_routes.danh_sach_san_bay') }}">
+    <div class="input-group mb-3" style="width: 80%; margin-left: 10%;">
+        <input type="text" class="form-control" name="search"
+            placeholder="Tìm kiếm theo mã sân bay, tên sân bay, vị trí, quốc gia" value="{{ search_query }}">
+        <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+    </div>
+</form>
+<a href="{{ url_for('san_bay_routes.them_san_bay') }}" class="btn btn-success my-3" style="margin-left: 10%;">Thêm
+    mới</a>
+<div class="table-wrapper">
     <table class="table mt-3 mx-auto" style="width: 80%; text-align: center;">
         <thead>
             <tr>
@@ -29,13 +25,15 @@
         <tbody>
             {% for airport in airport_list %}
             <tr>
-                <td>{{ airport.abbreviate_name }}</td>
-                <td>{{ airport.name }}</td>
-                <td>{{ airport.location }} </td>
-                <td>{{ airport.nation }} </td>
-                <td>
-                    <a href="{{ url_for('san_bay_routes.sua_san_bay', airport_id=airport.abbreviate_name) }}" class="btn btn-warning">Sửa</a>
-                    <a href="{{ url_for('san_bay_routes.xoa_san_bay', airport_id=airport.abbreviate_name) }}"class="btn btn-danger">Xóa</a>
+                <td class="align-middle">{{ airport.abbreviate_name }}</td>
+                <td class="align-middle">{{ airport.name }}</td>
+                <td class="align-middle">{{ airport.location }} </td>
+                <td class="align-middle">{{ airport.nation }} </td>
+                <td class="align-middle">
+                    <a href="{{ url_for('san_bay_routes.sua_san_bay', airport_id=airport.abbreviate_name) }}"
+                        class="btn btn-warning">Sửa</a>
+                    <a href="{{ url_for('san_bay_routes.xoa_san_bay', airport_id=airport.abbreviate_name) }}"
+                        class="btn btn-danger">Xóa</a>
                 </td>
             </tr>
             {% endfor %}

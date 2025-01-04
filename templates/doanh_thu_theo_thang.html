@@ -1,19 +1,6 @@
 {% extends "layout/base.html" %}
-{% block menu %}
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('authentication_routes.trang_admin') }}">Trang chủ</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay_admin') }}">Quản lý chuyến bay</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('san_bay_routes.danh_sach_san_bay') }}">Quản lý sân bay</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('quy_dinh_routes.thay_doi_quy_dinh') }}">Quy định</a></li>
-    <li class=""><a class="nav-mobile-link"
-            href="{{ url_for('quy_dinh_routes.doanh_thu_theo_thang') }}">Báo cáo</a></li>
-    <li class=""><a class="nav-mobile-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
-{% endblock %}
 {% block main_content %}
-<h2 class="text-center mb-4">Báo Cáo Doanh Thu Theo Tháng</h2>
+<h2 class="text-center mb-4 text-uppercase">Báo Cáo Doanh Thu Theo Tháng</h2>
 <form id="monthForm" method="post" class="grid wide">
     <div class="form-group">
         <label for="selectedMonth">Chọn tháng:</label>
@@ -34,7 +21,7 @@
 
 {% endblock %}
 {% block js %}
- 
+
 <script>
     // Hàm chuyển hướng sang bảng báo cáo
     function redirectToTable() {
@@ -50,9 +37,9 @@
         window.location.href = `/bang_thong_ke?selected_month=${monthNumber}`;
     }
 
-    const labels = {{ data|map(attribute='route')|list|tojson }};
-    const revenues = {{ data|map(attribute='total_revenue')|list|tojson }};
-    
+    const labels = {{ data| map(attribute = 'route') | list | tojson }};
+    const revenues = {{ data| map(attribute = 'total_revenue') | list | tojson }};
+
     const ctx = document.getElementById('revenueChart').getContext('2d');
 
     // Khởi tạo biểu đồ
@@ -79,31 +66,33 @@
     });
 
     function exportReport() {
+        var month= '{{ month }}';
+        const selectedMonth = document.getElementById('selectedMonth').value;
         // Lấy ngữ cảnh của biểu đồ revenueChart
         var chartCanvas = document.getElementById('revenueChart');
         var chartImage = chartCanvas.toDataURL('image/png', 1.0); // Chuyển biểu đồ thành ảnh PNG
-    
+
         // Tạo một container HTML để xuất PDF
         var exportContainer = document.createElement('div');
-    
+
         // Thêm tiêu đề báo cáo
         var titleElement = document.createElement('h2');
         titleElement.textContent = 'Báo Cáo Doanh Thu Theo Tháng';
         titleElement.style.textAlign = 'center';
         exportContainer.appendChild(titleElement);
-    
+
         // Thêm thông tin tháng được chọn
         var monthElement = document.createElement('p');
-        monthElement.textContent = 'Tháng: ' + document.getElementById('selectedMonth').value;
+        monthElement.textContent = 'Tháng: ' + month;
         monthElement.style.textAlign = 'center';
         exportContainer.appendChild(monthElement);
-    
+
         // Thêm hình ảnh biểu đồ vào container
         var chartImageElement = document.createElement('img');
         chartImageElement.src = chartImage;
         chartImageElement.style.width = '100%'; // Đảm bảo hình ảnh vừa khung PDF
         exportContainer.appendChild(chartImageElement);
-    
+
         // Cấu hình xuất PDF
         var pdfOptions = {
             margin: 10,
@@ -112,7 +101,7 @@
             html2canvas: { scale: 2 }, // Đảm bảo độ nét cho hình ảnh
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
-    
+
         // Xuất PDF
         html2pdf().set(pdfOptions).from(exportContainer).save();
     }
