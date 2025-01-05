@@ -6,9 +6,6 @@ from sqlalchemy import or_
 
 lich_chuyen_bay_routes = Blueprint('lich_chuyen_bay_routes', __name__)
 
-
-from datetime import datetime
-
 from datetime import datetime
 
 @lich_chuyen_bay_routes.route('/lich_chuyen_bay/<flight_id>', methods=['GET', 'POST'])

@@ -20,7 +20,7 @@ from flask_admin.contrib.sqla import ModelView
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/airlineticket_db5?charset=utf8mb4'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234@localhost/airlineticket_db1?charset=utf8mb4'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 db.init_app(app)
